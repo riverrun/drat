@@ -1,4 +1,4 @@
-drat
+Drat
 ====
 
-Reading text analysis tool written in Python 3
+Text analysis tool written in Python 3
