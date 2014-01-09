@@ -21,39 +21,51 @@ import textwrap
 import time
 
 class Checktext(object):
-    def __init__(self, base_url):
-        self.com_dict = os.path.join(base_url, 'drat', 'EN_vocab')
-        self.func_dict = os.path.join(base_url, 'drat', 'EN_function')
+    def __init__(self, name, base_dir):
+        self.name = name
+        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab')
+        self.func_dict = os.path.join(base_dir, 'drat', 'EN_function')
 
-    def load_words(self):
+    def load_common(self):
         with open(self.com_dict) as words_file:
             data = words_file.read()
         self.common_words = {word for word in data.splitlines()}
 
+    def load_funcwords(self):
+        with open(self.func_dict) as words_file:
+            data = words_file.read()
+        self.func_words = {word for word in data.splitlines()}
+
     def load_file(self, infile):
         table = {ord(c): ' ' for c in string.punctuation}
         words = [word.lower() for line in infile for word in line.translate(table).split() if word.isalpha()]
-        self.check_words(words)
+        self.total = len(words)
+        self.check_common(words)
 
-    def check_words(self, words):
+    def check_common(self, words):
         unique_words = set()
         add_unique = unique_words.add
         uncommon = set()
         add_un = uncommon.add
+        lexi = 0
         for word in words:
             add_unique(word)
+            if word not in self.func_words:
+                lexi += 1
             if word not in self.common_words:
                 add_un(word)
         uniq_len = len(unique_words)
-        self.print_table(uniq_len, uncommon)
+        self.print_table(uniq_len, uncommon, lexi)
 
-    def print_table(self, uniq_len, uncommon):
+    def print_table(self, uniq_len, uncommon, lexi):
         uncom_len = len(uncommon)
-        text = 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
+        lex_density = lexi / self.total * 100
+        text = 'The lexical density of this text is {:.2f}.\n'.format(lex_density)
+        text += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
         text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
         text += textwrap.fill('   '.join(list(uncommon)), width=80)
-        report = '{}_report.txt'.format(time.strftime('%d%m_%H%M%S'))
+        report = '{}_{}.txt'.format(self.name, time.strftime('%H%M%S'))
         with open(report, 'w') as outfile:
             outfile.write(text)
-        print('There are {:d} uncommon words in this text.'.format(uncom_len))
+        print('There are {:d} uncommon words, and the lexical density is {:.2f}.'.format(uncom_len, lex_density))
         print('For further details, read the {} file.'.format(report))

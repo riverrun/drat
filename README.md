@@ -4,7 +4,7 @@ Text analysis tool written in Python 3.
 
 ### Features
 
-Drat is a tool that analyzes reading texts and produces a brief report which details the number of uncommon words that are in the text and lists all of these uncommon words.
+Drat is a tool that analyzes reading texts and produces a brief report which details the lexical density of the text and the number of uncommon words in the text. It also lists all of these uncommon words.
 
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text files. It is also possible to analyze a text from the Internet by supplying a url.
 
@@ -23,7 +23,7 @@ And this command will analyze a text file called 'CastleAaarrggh.txt':
 ### Todo
 
 * Make it easier to call multiple files in one command.
-* Support for analyzing the complexity of texts.
+* More support for analyzing the complexity of texts.
 * Support other languages.
 * Whatever feature requests people have - as long as it's not too much work :)
 

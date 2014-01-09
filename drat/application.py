@@ -27,21 +27,22 @@ common English words, and a report of the results will be saved in the current w
 
 def args_handler(args):
     if args.text:
-        run_check(args.text)
+        run_check(args.text, args.text.name)
     if args.office:
         doc_reader = parsers.DocParser(args.office)
         data = doc_reader.get_doctype().splitlines()
-        run_check(data)
+        run_check(data, args.office.split('.', 1)[0])
     if args.url:
         response = urllib.request.urlopen(args.url)
         html = str(response.read())
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
-        run_check(html.splitlines())
+        run_check(html.splitlines(), args.url.rsplit('/', 1)[1])
 
-def run_check(data):
-    check = analysis.Checktext(base_dir)
-    check.load_words()
+def run_check(data, name):
+    check = analysis.Checktext(name, base_dir)
+    check.load_common()
+    check.load_funcwords()
     check.load_file(data)
 
 def main():
