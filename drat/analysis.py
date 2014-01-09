@@ -52,7 +52,7 @@ class Checktext(object):
         text = 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
         text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
         text += textwrap.fill('   '.join(list(uncommon)), width=80)
-        report = '{}_report.txt'.format(time.strftime('%d%m_%H%M'))
+        report = '{}_report.txt'.format(time.strftime('%d%m_%H%M%S'))
         with open(report, 'w') as outfile:
             outfile.write(text)
         print('There are {:d} uncommon words in this text.'.format(uncom_len))

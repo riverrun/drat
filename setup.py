@@ -31,6 +31,6 @@ setup(
     author = 'David Whitlock',
     author_email = 'alovedalongthe@gmail.com',
     url = 'https://github.com/riverrun/drat',
-    description = 'An text analysis tool',
+    description = 'A reading text analysis tool',
     license = 'GPLv3',
 )
