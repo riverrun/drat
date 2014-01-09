@@ -17,6 +17,7 @@
 
 import os.path
 import argparse
+import sys
 import urllib.request
 from . import analysis, parsers
 
@@ -27,17 +28,20 @@ common English words, and a report of the results will be saved in the current w
 
 def args_handler(args):
     if args.text:
-        run_check(args.text, args.text.name)
+        for arg in args.text:
+            run_check(arg, arg.name)
     if args.office:
-        doc_reader = parsers.DocParser(args.office)
-        data = doc_reader.get_doctype().splitlines()
-        run_check(data, args.office.split('.', 1)[0])
+        for arg in args.office:
+            doc_reader = parsers.DocParser(arg)
+            data = doc_reader.get_doctype().splitlines()
+            run_check(data, arg.split('.', 1)[0])
     if args.url:
-        response = urllib.request.urlopen(args.url)
-        html = str(response.read())
-        url_reader = parsers.HtmlParser()
-        url_reader.feed(html)
-        run_check(html.splitlines(), args.url.rsplit('/', 1)[1])
+        for arg in args.url:
+            response = urllib.request.urlopen(arg)
+            html = str(response.read())
+            url_reader = parsers.HtmlParser()
+            url_reader.feed(html)
+            run_check(html.splitlines(), arg.rsplit('/', 1)[1])
 
 def run_check(data, name):
     check = analysis.Checktext(name, base_dir)
@@ -47,8 +51,11 @@ def run_check(data, name):
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
-    parser.add_argument('-o', dest='office', help='Name of office document you want checked.')
-    parser.add_argument('-t', dest='text', type=argparse.FileType('r'), help='Name of text file you want checked.')
-    parser.add_argument('-u', dest='url', help='Name of url you want checked.')
+    parser.add_argument('-o', dest='office', type=str, nargs='+', help='Name of office document you want checked.')
+    parser.add_argument('-t', dest='text', type=argparse.FileType('r'), nargs='+', help='Name of text file you want checked.')
+    parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url you want checked.')
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
     args = parser.parse_args()
     args_handler(args)
