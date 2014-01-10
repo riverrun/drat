@@ -27,14 +27,14 @@ usage_info = """The file, or url, you have chosen will be compared with a list o
 common English words, and a report of the results will be saved in the current working directory."""
 
 def args_handler(args):
-    if args.text:
-        for arg in args.text:
-            run_check(arg, arg.name)
-    if args.office:
-        for arg in args.office:
-            doc_reader = parsers.DocParser(arg)
-            data = doc_reader.get_doctype().splitlines()
-            run_check(data, arg.split('.', 1)[0])
+    if args.infile:
+        for arg in args.infile:
+            if arg.name.endswith(('.docx', '.odt', '.ods', '.odp')):
+                doc_reader = parsers.DocParser(arg.name)
+                data = doc_reader.get_doctype().splitlines()
+                run_check(data, arg.name.split('.', 1)[0])
+            else:
+                run_check(arg, arg.name)
     if args.url:
         for arg in args.url:
             response = urllib.request.urlopen(arg)
@@ -51,8 +51,9 @@ def run_check(data, name):
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
-    parser.add_argument('-o', dest='office', type=str, nargs='+', help='Name of office document you want checked.')
-    parser.add_argument('-t', dest='text', type=argparse.FileType('r'), nargs='+', help='Name of text file you want checked.')
+    #parser.add_argument('-o', dest='office', type=str, nargs='+', help='Name of office document you want checked.')
+    #parser.add_argument('-t', dest='text', type=argparse.FileType('r'), nargs='+', help='Name of text file you want checked.')
+    parser.add_argument('-f', dest='infile', type=argparse.FileType('r'), nargs='+', help='Name of file you want checked.')
     parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url you want checked.')
     if len(sys.argv) == 1:
         parser.print_help()

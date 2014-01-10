@@ -10,19 +10,22 @@ Drat supports **docx**, **odt**, **ods**, **odp** files as well as text files. I
 
 ### Use
 
-At the moment, Drat has 3 options (-o [for office files], -t [for text files], and -u [for urls]).
+At the moment, Drat has 2 command line options (-f [for office and text files], and -u [for urls]).
 
 For example, the following command will analyze an office (Writer) document called 'NorwegianBlue.odt':
 
-    drat -o NorwegianBlue.odt
+    drat -f NorwegianBlue.odt
 
-And this command will analyze a text file called 'CastleAaarrggh.txt':
+And this command will download the following url and analyze the text in it:
 
-    drat -t CastleAaarrggh.txt
+    drat -u http://www.ibras.dk/montypython/episode24.htm
+
+It is also possible to analyze several files in one command:
+
+    drat -f CastleAaaarrrggh.txt LuvinmyTummy.docx PininFjords.odt
 
 ### Todo
 
-* Make it easier to call multiple files in one command.
 * More support for analyzing the complexity of texts.
 * Support other languages.
 * Whatever feature requests people have - as long as it's not too much work :)
