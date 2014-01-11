@@ -41,7 +41,8 @@ def args_handler(args):
             html = str(response.read())
             url_reader = parsers.HtmlParser()
             url_reader.feed(html)
-            run_check(html.splitlines(), arg.rsplit('/', 1)[1])
+            data = url_reader.text
+            run_check(data, arg.rsplit('/', 1)[1])
 
 def run_check(data, name):
     check = analysis.Checktext(name, base_dir)
@@ -51,8 +52,6 @@ def run_check(data, name):
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
-    #parser.add_argument('-o', dest='office', type=str, nargs='+', help='Name of office document you want checked.')
-    #parser.add_argument('-t', dest='text', type=argparse.FileType('r'), nargs='+', help='Name of text file you want checked.')
     parser.add_argument('-f', dest='infile', type=argparse.FileType('r'), nargs='+', help='Name of file you want checked.')
     parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url you want checked.')
     if len(sys.argv) == 1:
