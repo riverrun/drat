@@ -18,7 +18,7 @@
 import os.path
 import argparse
 import sys
-import urllib.request
+import requests
 from . import analysis, parsers
 
 base_dir = '/usr/share' if os.path.isdir('/usr/share/drat') else '/usr/local/share'
@@ -37,8 +37,8 @@ def args_handler(args):
                 run_check(arg, arg.name)
     if args.url:
         for arg in args.url:
-            response = urllib.request.urlopen(arg)
-            html = str(response.read())
+            response = requests.get(arg)
+            html = response.text
             url_reader = parsers.HtmlParser()
             url_reader.feed(html)
             data = url_reader.text

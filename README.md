@@ -30,6 +30,10 @@ It is also possible to analyze several files in one command:
 * Support other languages.
 * Whatever feature requests people have - as long as it's not too much work :)
 
+### Dependencies
+
+Python3 and requests (python3-requests if you are on a debian-based system).
+
 ### Name
 
 Drat is a recursive acronym which either stands for Drat is a Reading Analysis Tool or Drat is a Rabid Assessor of Texts.
