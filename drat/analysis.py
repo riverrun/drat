@@ -26,10 +26,14 @@ class Checktext(object):
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab')
         self.func_dict = os.path.join(base_dir, 'drat', 'EN_function')
 
-    def load_common(self):
+    def load_common(self, wordlist):
         with open(self.com_dict) as words_file:
             data = words_file.read()
         self.common_words = {word for word in data.splitlines()}
+        if wordlist:
+            for new_words in wordlist:
+                new_dict = {word.strip() for word in new_words}
+                self.common_words.update(new_dict)
 
     def load_funcwords(self):
         with open(self.func_dict) as words_file:
@@ -57,15 +61,22 @@ class Checktext(object):
         uniq_len = len(unique_words)
         self.print_table(uniq_len, uncommon, lexi)
 
+    def write_report(self, text):
+        table = {ord(c): ' ' for c in 'htpw/.'}
+        name = self.name.translate(table).split()[0]
+        report = '{}_{:.2f}.txt'.format(name, time.time())
+        with open(report, 'w') as outfile:
+            outfile.write(text)
+        return report
+
     def print_table(self, uniq_len, uncommon, lexi):
         uncom_len = len(uncommon)
         lex_density = lexi / self.total * 100
-        text = 'The lexical density of this text is {:.2f}.\n'.format(lex_density)
+        text = 'Report for {}.\n'.format(self.name)
+        text += 'The lexical density of this text is {:.2f}.\n'.format(lex_density)
         text += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
         text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
         text += textwrap.fill('   '.join(list(uncommon)), width=80)
-        report = '{}_{}.txt'.format(self.name, time.strftime('%H%M%S'))
-        with open(report, 'w') as outfile:
-            outfile.write(text)
+        report = self.write_report(text)
         print('There are {:d} uncommon words, and the lexical density is {:.2f}.'.format(uncom_len, lex_density))
         print('For further details, read the {} file.'.format(report))

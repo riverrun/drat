@@ -28,13 +28,14 @@ common English words, and a report of the results will be saved in the current w
 
 def args_handler(args):
     if args.infile:
+        exts = ('.docx', '.odt', '.ods', '.odp')
         for arg in args.infile:
-            if arg.name.endswith(('.docx', '.odt', '.ods', '.odp')):
+            if arg.name.endswith(exts):
                 doc_reader = parsers.DocParser(arg.name)
                 data = doc_reader.get_doctype().splitlines()
-                run_check(data, arg.name.split('.', 1)[0])
+                run_check(data, arg.name, args.wordlist)
             else:
-                run_check(arg, arg.name)
+                run_check(arg, arg.name, args.wordlist)
     if args.url:
         for arg in args.url:
             response = requests.get(arg)
@@ -42,18 +43,21 @@ def args_handler(args):
             url_reader = parsers.HtmlParser()
             url_reader.feed(html)
             data = url_reader.text
-            run_check(data, arg.rsplit('/', 1)[1])
+            run_check(data, arg, args.wordlist)
 
-def run_check(data, name):
+def run_check(data, name, wordlist):
     check = analysis.Checktext(name, base_dir)
-    check.load_common()
+    check.load_common(wordlist)
     check.load_funcwords()
     check.load_file(data)
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
-    parser.add_argument('-f', dest='infile', type=argparse.FileType('r'), nargs='+', help='Name of file you want checked.')
-    parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url you want checked.')
+    parser.add_argument('-f', dest='infile', type=argparse.FileType('r'),
+            nargs='+', help='Name of file(s) you want checked.')
+    parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url(s) you want checked.')
+    parser.add_argument('-w', dest='wordlist', type=argparse.FileType('r'),
+            nargs='+', help='Name of additional wordlist(s) you want to use.')
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)

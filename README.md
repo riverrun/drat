@@ -10,11 +10,21 @@ Drat supports **docx**, **odt**, **ods**, **odp** files as well as text files. I
 
 ### Use
 
-At the moment, Drat has 2 command line options (-f [for office and text files], and -u [for urls]).
+At the moment, Drat has the following command line options: 
+
+* -f check a file(s) (office and/or text files)
+* -u check a url(s)
+* -w use an additional wordlist(s)
+  * This wordlist needs to be a text file with each word on a separate line
+  * More than one wordlist can be used
 
 For example, the following command will analyze an office (Writer) document called 'NorwegianBlue.odt':
 
     drat -f NorwegianBlue.odt
+
+The -w option will let you filter out additional words:
+
+    drat -f NorwegianBlue.odt -w euphemisms_death.txt
 
 And this command will download the following url and analyze the text in it:
 
