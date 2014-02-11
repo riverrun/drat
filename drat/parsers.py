@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
 class HtmlParser(HTMLParser):
+    """Parse urls."""
     def __init__(self):
         HTMLParser.__init__(self)
         self.get_data = False
@@ -38,6 +39,7 @@ class HtmlParser(HTMLParser):
             self.text.append(data)
 
 class DocParser(object):
+    """Parse docx and odf files."""
     def __init__(self, infile):
         self.infile = infile
 

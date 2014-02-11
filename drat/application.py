@@ -27,6 +27,7 @@ usage_info = """The file, or url, you have chosen will be compared with a list o
 common English words, and a report of the results will be saved in the current working directory."""
 
 def args_handler(args):
+    """Handle the command line arguments."""
     if args.infile:
         exts = ('.docx', '.odt', '.ods', '.odp')
         for arg in args.infile:

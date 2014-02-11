@@ -27,6 +27,7 @@ class Checktext(object):
         self.func_dict = os.path.join(base_dir, 'drat', 'EN_function')
 
     def load_common(self, wordlist):
+        """Create the dictionary of common words."""
         with open(self.com_dict) as words_file:
             data = words_file.read()
         self.common_words = {word for word in data.splitlines()}
@@ -36,6 +37,7 @@ class Checktext(object):
                 self.common_words.update(new_dict)
 
     def load_funcwords(self):
+        """Create the dictionary of function words."""
         with open(self.func_dict) as words_file:
             data = words_file.read()
         self.func_words = {word for word in data.splitlines()}
@@ -47,6 +49,7 @@ class Checktext(object):
         self.check_common(words)
 
     def check_common(self, words):
+        """Check for uncommon words and count lexical words."""
         unique_words = set()
         add_unique = unique_words.add
         uncommon = set()
