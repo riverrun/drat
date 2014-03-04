@@ -1,5 +1,5 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
-# A simple image viewer
+# A simple text analysis tool
 # Copyright (C) 2013-2014 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ def args_handler(args):
             run_check(data, arg, args.wordlist)
 
 def run_check(data, name, wordlist):
-    check = analysis.Checktext(name, base_dir)
+    check = analysis.Checktext(name, base_dir, False)
     check.load_common(wordlist)
     check.load_funcwords()
     check.load_file(data)

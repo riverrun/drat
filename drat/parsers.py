@@ -1,5 +1,5 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
-# A simple image viewer
+# A simple text analysis tool
 # Copyright (C) 2013-2014 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ class HtmlParser(HTMLParser):
     """Parse urls."""
     def __init__(self):
         HTMLParser.__init__(self)
-        self.get_data = False
+        self.get_data = True
         self.text = []
 
     def handle_starttag(self, tag, attrs):
-        if tag == 'p':
-            self.get_data = True
+        if tag == 'script':
+            self.get_data = False
 
     def handle_endtag(self, tag):
-        if tag == 'p':
-            self.get_data = False
+        if tag == 'script':
+            self.get_data = True
 
     def handle_data(self, data):
         if self.get_data:

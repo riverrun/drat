@@ -1,5 +1,5 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
-# A simple image viewer
+# A simple text analysis tool
 # Copyright (C) 2013-2014 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@ import textwrap
 import time
 
 class Checktext(object):
-    def __init__(self, name, base_dir):
+    def __init__(self, name, base_dir, web):
         self.name = name
+        self.web = web
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab')
         self.func_dict = os.path.join(base_dir, 'drat', 'EN_function')
 
@@ -62,7 +63,7 @@ class Checktext(object):
             if word not in self.common_words:
                 add_un(word)
         uniq_len = len(unique_words)
-        self.print_table(uniq_len, uncommon, lexi)
+        self.fmt_output(uniq_len, uncommon, lexi)
 
     def write_report(self, text):
         table = {ord(c): ' ' for c in 'htpw/.'}
@@ -72,14 +73,18 @@ class Checktext(object):
             outfile.write(text)
         return report
 
-    def print_table(self, uniq_len, uncommon, lexi):
+    def fmt_output(self, uniq_len, uncommon, lexi):
         uncom_len = len(uncommon)
         lex_density = lexi / self.total * 100
-        text = 'Report for {}.\n'.format(self.name)
-        text += 'The lexical density of this text is {:.2f}.\n'.format(lex_density)
-        text += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
-        text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
-        text += textwrap.fill('   '.join(list(uncommon)), width=80)
-        report = self.write_report(text)
-        print('There are {:d} uncommon words, and the lexical density is {:.2f}.'.format(uncom_len, lex_density))
-        print('For further details, read the {} file.'.format(report))
+        self.text = 'Report for {}.\n'.format(self.name)
+        self.text += 'The lexical density of this text is {:.2f}.\n'.format(lex_density)
+        self.text += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
+        self.text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
+        self.text += textwrap.fill('   '.join(list(uncommon)), width=80)
+        self.message = 'There are {:d} uncommon words, and the lexical density is {:.2f}.\n'.format(uncom_len, lex_density)
+        if self.web:
+            return
+        else:
+            report = self.write_report(self.text)
+            self.message += 'For further details, read the {} file.'.format(report)
+            print(self.message)

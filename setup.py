@@ -1,8 +1,7 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 
 # Authors: David Whitlock <alovedalongthe@gmail.com>
-# A simple image viewer
+# A simple text analysis tool
 # Copyright (C) 2013-2014 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
