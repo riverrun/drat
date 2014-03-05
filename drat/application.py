@@ -47,9 +47,7 @@ def args_handler(args):
             run_check(data, arg, args.wordlist)
 
 def run_check(data, name, wordlist):
-    check = analysis.Checktext(name, base_dir, False)
-    check.load_common(wordlist)
-    check.load_funcwords()
+    check = analysis.Checktext(name, wordlist, base_dir, False)
     check.load_file(data)
 
 def main():

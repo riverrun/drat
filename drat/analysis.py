@@ -21,11 +21,13 @@ import textwrap
 import time
 
 class Checktext(object):
-    def __init__(self, name, base_dir, web):
+    def __init__(self, name, wordlist, base_dir, web):
         self.name = name
         self.web = web
-        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab')
-        self.func_dict = os.path.join(base_dir, 'drat', 'EN_function')
+        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.txt')
+        self.func_dict = os.path.join(base_dir, 'drat', 'EN_function.txt')
+        self.load_common(wordlist)
+        self.load_funcwords()
 
     def load_common(self, wordlist):
         """Create the dictionary of common words."""

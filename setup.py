@@ -21,11 +21,11 @@ from distutils.core import setup
 
 setup(
     name = 'drat',
-    version = '0.0.1',
+    version = '0.0.2',
     packages = ['drat'],
     scripts = ['bin/drat'],
     data_files = [
-        ('share/drat', ['data/EN_vocab', 'data/EN_function']),
+        ('share/drat', ['data/EN_vocab.txt', 'data/EN_function.txt']),
         ],
     author = 'David Whitlock',
     author_email = 'alovedalongthe@gmail.com',
