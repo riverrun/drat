@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import os.path
+import os
 import argparse
 import sys
 import requests
@@ -24,7 +24,8 @@ from . import analysis, parsers
 base_dir = '/usr/share' if os.path.isdir('/usr/share/drat') else '/usr/local/share'
 
 usage_info = """The file, or url, you have chosen will be compared with a list of
-common English words, and a report of the results will be saved in the current working directory."""
+common English words, and a report of the results will be saved in the current working directory.
+You can also provide a list of url links (with each link on a separate line) written in a text file."""
 
 def args_handler(args):
     """Handle the command line arguments."""
@@ -65,5 +66,4 @@ def main():
     args = parser.parse_args()
     if args.linklist:
         args.url = [line.strip() for arg in args.linklist for line in arg]
-    print(args)
     args_handler(args)

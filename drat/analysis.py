@@ -16,24 +16,24 @@
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 import os.path
+import json
 import string
 import textwrap
-from datetime import datetime
 
 class Checktext(object):
     def __init__(self, name, wordlist, base_dir, web):
         self.name = name
         self.web = web
-        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.txt')
-        self.func_dict = os.path.join(base_dir, 'drat', 'EN_function.txt')
+        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
+        self.func_dict = os.path.join(base_dir, 'drat', 'EN_function.json')
         self.load_common(wordlist)
         self.load_funcwords()
 
     def load_common(self, wordlist):
         """Create the dictionary of common words."""
         with open(self.com_dict) as words_file:
-            data = words_file.read()
-        self.common_words = {word for word in data.splitlines()}
+            data = json.load(words_file)
+        self.common_words = set(data)
         if wordlist:
             for new_words in wordlist:
                 new_dict = {word.strip() for word in new_words}
@@ -42,8 +42,8 @@ class Checktext(object):
     def load_funcwords(self):
         """Create the dictionary of function words."""
         with open(self.func_dict) as words_file:
-            data = words_file.read()
-        self.func_words = {word for word in data.splitlines()}
+            data = json.load(words_file)
+        self.func_words = set(data)
 
     def load_file(self, infile):
         table = {ord(c): ' ' for c in string.punctuation}
@@ -68,10 +68,11 @@ class Checktext(object):
         self.fmt_output(uniq_len, uncommon, lexi)
 
     def write_report(self, text):
-        report = 'Text_report_{}.txt'.format(datetime.now().microsecond)
-        with open(report, 'w') as outfile:
+        i = 1
+        filename = 'report_{0:03d}.txt'.format(i)
+        with open(filename, 'w') as outfile:
             outfile.write(text)
-        return report
+        return filename
 
     def fmt_output(self, uniq_len, uncommon, lexi):
         uncom_len = len(uncommon)

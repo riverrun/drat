@@ -23,21 +23,27 @@ class HtmlParser(HTMLParser):
     """Parse urls."""
     def __init__(self):
         HTMLParser.__init__(self)
-        self.get_data = False
+        self.body = False
+        self.get_data = True
         self.text = []
 
     def handle_starttag(self, tag, attrs):
-        if tag == 'p':
-            print(tag)
-            self.get_data = True
+        if tag == 'body':
+            self.body = True
+        if tag == 'script':
+            self.get_data = False
+        else:
+            if self.body:
+                print(tag)
 
     def handle_endtag(self, tag):
-        if tag == 'p':
-            print(tag)
-            self.get_data = False
+        if tag == 'body':
+            self.body = False
+        if tag == 'script':
+            self.get_data = True
 
     def handle_data(self, data):
-        if self.get_data:
+        if self.body and self.get_data:
             self.text.append(data)
 
 class DocParser(object):
