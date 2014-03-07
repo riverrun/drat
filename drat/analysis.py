@@ -18,7 +18,7 @@
 import os.path
 import string
 import textwrap
-import time
+from datetime import datetime
 
 class Checktext(object):
     def __init__(self, name, wordlist, base_dir, web):
@@ -68,9 +68,7 @@ class Checktext(object):
         self.fmt_output(uniq_len, uncommon, lexi)
 
     def write_report(self, text):
-        table = {ord(c): ' ' for c in 'htpw/.'}
-        name = self.name.translate(table).split()[0]
-        report = '{}_{:.2f}.txt'.format(name, time.time())
+        report = 'Text_report_{}.txt'.format(datetime.now().microsecond)
         with open(report, 'w') as outfile:
             outfile.write(text)
         return report

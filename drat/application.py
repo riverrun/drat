@@ -54,6 +54,8 @@ def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
     parser.add_argument('-f', dest='infile', type=argparse.FileType('r'),
             nargs='+', help='Name of file(s) you want checked.')
+    parser.add_argument('-l', dest='linklist', type=argparse.FileType('r'),
+            nargs='+', help='Name of file with url link(s) you want checked.')
     parser.add_argument('-u', dest='url', type=str, nargs='+', help='Name of url(s) you want checked.')
     parser.add_argument('-w', dest='wordlist', type=argparse.FileType('r'),
             nargs='+', help='Name of additional wordlist(s) you want to use.')
@@ -61,4 +63,7 @@ def main():
         parser.print_help()
         sys.exit(1)
     args = parser.parse_args()
+    if args.linklist:
+        args.url = [line.strip() for arg in args.linklist for line in arg]
+    print(args)
     args_handler(args)
