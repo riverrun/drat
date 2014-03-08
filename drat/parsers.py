@@ -32,9 +32,6 @@ class HtmlParser(HTMLParser):
             self.body = True
         if tag == 'script':
             self.get_data = False
-        else:
-            if self.body:
-                print(tag)
 
     def handle_endtag(self, tag):
         if tag == 'body':

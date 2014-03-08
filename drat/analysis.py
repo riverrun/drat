@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import os.path
+import os
 import json
 import string
 import textwrap
@@ -24,6 +24,7 @@ class Checktext(object):
     def __init__(self, name, wordlist, base_dir, web):
         self.name = name
         self.web = web
+        self.table = {ord(c): ' ' for c in string.punctuation}
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
         self.func_dict = os.path.join(base_dir, 'drat', 'EN_function.json')
         self.load_common(wordlist)
@@ -36,7 +37,7 @@ class Checktext(object):
         self.common_words = set(data)
         if wordlist:
             for new_words in wordlist:
-                new_dict = {word.strip() for word in new_words}
+                new_dict = {word.strip() for word in new_words.splitlines()}
                 self.common_words.update(new_dict)
 
     def load_funcwords(self):
@@ -46,8 +47,8 @@ class Checktext(object):
         self.func_words = set(data)
 
     def load_file(self, infile):
-        table = {ord(c): ' ' for c in string.punctuation}
-        words = [word.lower() for line in infile for word in line.translate(table).split() if word.isalpha()]
+        self.table = {ord(c): ' ' for c in string.punctuation}
+        words = [word.lower() for line in infile for word in line.translate(self.table).split() if word.isalpha()]
         self.total = len(words)
         self.check_common(words)
 
@@ -68,8 +69,12 @@ class Checktext(object):
         self.fmt_output(uniq_len, uncommon, lexi)
 
     def write_report(self, text):
-        i = 1
-        filename = 'report_{0:03d}.txt'.format(i)
+        name = self.name.translate(self.table).split()[-1]
+        ls = os.listdir()
+        for count in range(1, 100):
+            filename = '{}_{:03d}.txt'.format(name, count)
+            if filename not in ls:
+                break
         with open(filename, 'w') as outfile:
             outfile.write(text)
         return filename
@@ -83,9 +88,7 @@ class Checktext(object):
         self.text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
         self.text += textwrap.fill('   '.join(list(uncommon)), width=80)
         self.message = 'There are {:d} uncommon words, and the lexical density is {:.2f}.\n'.format(uncom_len, lex_density)
-        if self.web:
-            return
-        else:
+        if not self.web:
             report = self.write_report(self.text)
             self.message += 'For further details, read the {} file.'.format(report)
             print(self.message)
