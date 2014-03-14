@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import os.path
 import argparse
 import sys
 import requests
@@ -28,47 +27,49 @@ You can also provide a list of url links (with each link on a separate line) wri
 class ArgsHandler(object):
     """Handle the command line arguments."""
     def __init__(self, args):
+        self.sentences = 0
         self.args = args
         if not args.infile:
             with sys.stdin as f:
                 data = f.read()
             self.args.infile = [arg for arg in data.splitlines()]
 
-    def args_handler(self, base_dir):
+    def args_handler(self):
         for arg in self.args.infile:
             if arg.startswith('http'):
-                self.check_url(arg, base_dir)
+                self.check_url(arg)
             else:
-                self.check_file(arg, base_dir)
+                self.check_file(arg)
 
-    def check_url(self, arg, base_dir):
+    def check_url(self, arg):
         response = requests.get(arg)
         html = response.text
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
         data = url_reader.text
-        self.run_check(data, arg, self.args.wordlist, base_dir)
+        self.sentences = url_reader.sentences
+        self.run_check(data, arg, self.args.wordlist)
 
-    def check_file(self, arg, base_dir):
+    def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
         if arg.endswith(exts):
             doc_reader = parsers.DocParser(arg)
-            data = doc_reader.get_doctype().splitlines()
+            data = doc_reader.get_doctype()
         else:
             with open(arg) as f:
-                data = f.read().splitlines()
-        self.run_check(data, arg, self.args.wordlist, base_dir)
+                data = f.read()
+        self.sentences += data.count('.') + data.count('!') + data.count('?')
+        self.run_check(data.splitlines(), arg, self.args.wordlist)
 
-    def run_check(self, data, name, wordlist, base_dir):
-        check = analysis.Checktext(name, wordlist, base_dir, False)
-        check.load_file(data)
+    def run_check(self, data, name, wordlist):
+        check = analysis.Checktext(name, wordlist, False)
+        check.load_file(data, self.sentences)
 
 def main():
-    base_dir = '/usr/share' if os.path.isdir('/usr/share/drat') else '/usr/local/share'
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
     parser.add_argument('infile', type=str, nargs='*', help='Name of file(s), or url(s) you want checked.')
     parser.add_argument('-w', dest='wordlist', type=argparse.FileType('r'),
             nargs='?', help='Name of additional wordlist(s) you want to use.')
     args = parser.parse_args()
     handler = ArgsHandler(args)
-    handler.args_handler(base_dir)
+    handler.args_handler()

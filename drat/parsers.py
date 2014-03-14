@@ -26,6 +26,7 @@ class HtmlParser(HTMLParser):
         self.body = False
         self.get_data = True
         self.text = []
+        self.sentences = 0
 
     def handle_starttag(self, tag, attrs):
         if tag == 'body':
@@ -42,6 +43,7 @@ class HtmlParser(HTMLParser):
     def handle_data(self, data):
         if self.body and self.get_data:
             self.text.append(data)
+            self.sentences += data.count('.') + data.count('!') + data.count('?')
 
 class DocParser(object):
     """Parse docx and odf files."""
