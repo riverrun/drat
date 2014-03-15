@@ -25,7 +25,7 @@ setup(
     packages = ['drat'],
     scripts = ['bin/drat'],
     data_files = [
-        ('share/drat', ['data/EN_vocab.json', 'data/EN_function.json', 'data/dale_chall.json']),
+        ('share/drat', ['data/EN_vocab.json', 'data/dale_chall.json']),
         ],
     author = 'David Whitlock',
     author_email = 'alovedalongthe@gmail.com',
