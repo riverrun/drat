@@ -23,20 +23,21 @@ import textwrap
 base_dir = '/usr/local/share' if 'local' in os.path.split(__file__)[0].split('/') else '/usr/share'
 
 class Checktext(object):
-    def __init__(self, name, wordlist, web):
+    def __init__(self, name, wlist, verb, web):
         self.name = name
+        self.verb = verb
         self.web = web
-        self.load_common(wordlist)
+        self.load_common(wlist)
         self.load_dale_chall()
 
-    def load_common(self, wordlist):
+    def load_common(self, wlist):
         """Create the dictionary of common words."""
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
         with open(self.com_dict) as words_file:
             data = json.load(words_file)
         self.common_words = set(data)
-        if wordlist:
-            for new_words in wordlist:
+        if wlist:
+            for new_words in wlist:
                 new_dict = {word.strip() for word in new_words.splitlines()}
                 self.common_words.update(new_dict)
 
@@ -50,19 +51,17 @@ class Checktext(object):
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
     def load_file(self, infile, sentences):
+        """Count uncommon words and difficult words in file."""
         self.table = {ord(c): ' ' for c in string.punctuation}
-        words = [word.lower() for line in infile for word in line.translate(self.table).split() if word.isalpha()]
-        self.total = len(words)
-        self.check_common(words, sentences)
-
-    def check_common(self, words, sentences):
-        """Count uncommon words and difficult words."""
         unique_words = set()
         add_unique = unique_words.add
         uncommon = set()
         add_un = uncommon.add
         difficult = 0
+        self.total = 0
+        words = (word.lower() for line in infile for word in line.translate(self.table).split() if word.isalpha())
         for word in words:
+            self.total += 1
             add_unique(word)
             if word not in self.common_words:
                 add_un(word)
@@ -73,23 +72,13 @@ class Checktext(object):
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
 
     def dale_chall(self, difficult, sentences):
+        """Calculate Dale-Chall readability score."""
         pdw = difficult / self.total * 100
         asl = self.total / sentences
         raw = 0.1579 * (pdw) + 0.0496 * asl
         if pdw > 5:
             return raw + 3.6365
         return raw
-
-    def write_report(self, text):
-        name = self.name.translate(self.table).split()[-2]
-        ls = os.listdir()
-        for count in range(1, 100):
-            filename = '{}_{:03d}.txt'.format(name, count)
-            if filename not in ls:
-                break
-        with open(filename, 'w') as outfile:
-            outfile.write(text)
-        return filename
 
     def fmt_output(self, uniq_len, uncommon, dale_chall_score):
         uncom_len = len(uncommon)
@@ -99,14 +88,12 @@ class Checktext(object):
                 break
         else:
             self.read_grade = 'Grades 16 and above'
-        self.text = 'Report for {}.\n'.format(self.name)
-        self.text += 'The Dale-Chall readability score for this text is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
-        self.text += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
-        self.text += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
-        self.text += textwrap.fill('   '.join(list(uncommon)), width=80)
-        self.message = 'There are {:d} uncommon words.\n'.format(uncom_len)
-        self.message += 'The Dale-Chall readability score for this text is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
+        self.message = 'Report for {}.\n'.format(self.name)
+        self.message += 'There are {:d} uncommon words in this text.\n'.format(uncom_len)
+        self.message += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
+        self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
+        if self.verb:
+            self.message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
+            self.message += textwrap.fill('   '.join(list(uncommon)), width=80)
         if not self.web:
-            report = self.write_report(self.text)
-            self.message += 'For further details, read the {} file.'.format(report)
             print(self.message)

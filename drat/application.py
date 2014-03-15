@@ -48,7 +48,7 @@ class ArgsHandler(object):
         url_reader.feed(html)
         data = url_reader.text
         self.sentences = url_reader.sentences
-        self.run_check(data, arg, self.args.wordlist)
+        self.run_check(data, arg)
 
     def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
@@ -59,16 +59,17 @@ class ArgsHandler(object):
             with open(arg) as f:
                 data = f.read()
         self.sentences += data.count('.') + data.count('!') + data.count('?')
-        self.run_check(data.splitlines(), arg, self.args.wordlist)
+        self.run_check(data.splitlines(), arg)
 
-    def run_check(self, data, name, wordlist):
-        check = analysis.Checktext(name, wordlist, False)
+    def run_check(self, data, name):
+        check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
         check.load_file(data, self.sentences)
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
     parser.add_argument('infile', type=str, nargs='*', help='Name of file(s), or url(s) you want checked.')
-    parser.add_argument('-w', dest='wordlist', type=argparse.FileType('r'),
+    parser.add_argument('-v', '--verbose', dest='verb', action='store_true', help='Print more detailed information.')
+    parser.add_argument('-w', '--wordlist', dest='wlist', type=argparse.FileType('r'),
             nargs='?', help='Name of additional wordlist(s) you want to use.')
     args = parser.parse_args()
     handler = ArgsHandler(args)
