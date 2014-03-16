@@ -17,7 +17,6 @@
 
 import os
 import json
-import string
 import textwrap
 
 base_dir = '/usr/local/share' if 'local' in os.path.split(__file__)[0].split('/') else '/usr/share'
@@ -52,22 +51,21 @@ class Checktext(object):
 
     def load_file(self, infile, sentences):
         """Count uncommon words and difficult words in file."""
-        self.table = {ord(c): ' ' for c in string.punctuation}
+        punc = '!"%\'(),-.:;?[]_'
         unique_words = set()
         add_unique = unique_words.add
         uncommon = set()
         add_un = uncommon.add
         difficult = 0
-        self.total = 0
-        words = (word.lower() for line in infile for word in line.translate(self.table).split() if word.isalpha())
-        for word in words:
-            self.total += 1
+        words = (word.lower().strip(punc) for line in infile for word in line.split() if word.strip(punc).isalpha())
+        for idx, word in enumerate(words):
             add_unique(word)
             if word not in self.common_words:
                 add_un(word)
             if word not in self.dale_chall_words:
                 difficult += 1
-        dale_chall_score = round(self.dale_chall(difficult, sentences))
+        self.total = idx + 1
+        dale_chall_score = round(self.dale_chall(difficult, sentences), 1)
         uniq_len = len(unique_words)
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
 
@@ -90,7 +88,7 @@ class Checktext(object):
             self.read_grade = 'Grades 16 and above'
         self.message = 'Report for {}.\n'.format(self.name)
         self.message += 'There are {:d} uncommon words in this text.\n'.format(uncom_len)
-        self.message += 'There are a total of {:d} unique words in the text.\n'.format(uniq_len)
+        self.message += 'This is out of a total of {:d} unique words.\n'.format(uniq_len)
         self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
         if self.verb:
             self.message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
