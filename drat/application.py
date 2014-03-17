@@ -59,11 +59,13 @@ class ArgsHandler(object):
             with open(arg) as f:
                 data = f.read()
         self.sentences += data.count('.') + data.count('!') + data.count('?')
-        self.run_check(data.splitlines(), arg)
+        self.run_check(data, arg)
 
     def run_check(self, data, name):
+        punc = '!"%\'(),-.:;?[]_'
+        words = [word.lower().strip(punc) for word in data.split() if word.strip(punc).isalpha()]
         check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
-        check.load_file(data, self.sentences)
+        check.load_file(words, self.sentences)
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)

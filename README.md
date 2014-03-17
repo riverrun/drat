@@ -4,13 +4,13 @@ Text analysis tool written in Python 3.
 
 ### Features
 
-Drat is a tool that analyzes reading texts and produces a brief report which details the lexical density of the text and the number of uncommon words in the text. It also lists all of these uncommon words.
+Drat is a tool that analyzes reading texts and produces a brief report which gives a readability score and the number of uncommon words (according to the General Service List) in the text. It also lists all of these uncommon words (if you choose the verbose option).
 
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text files and urls. You can also use a text file with links written in it.
 
 ### Use
 
-drat [-w wordlist-file] file-or-url
+drat [-h] [-v] [-w wordlist-file] file-or-url
 
 * multiple files, or urls, can be analyzed
 * the files can be text files, docx files, or odf files
@@ -38,6 +38,8 @@ It is also possible to analyze several files in one command:
 The following command uses a text file with links in it (one link per line) and parses the links in it:
 
     drat < list-of-urls.txt
+
+Adding the -v option to any of the above commands will give you a list of the uncommon words.
 
 ### Todo
 

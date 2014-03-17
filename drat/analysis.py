@@ -49,15 +49,13 @@ class Checktext(object):
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
-    def load_file(self, infile, sentences):
+    def load_file(self, words, sentences):
         """Count uncommon words and difficult words in file."""
-        punc = '!"%\'(),-.:;?[]_'
         unique_words = set()
         add_unique = unique_words.add
         uncommon = set()
         add_un = uncommon.add
         difficult = 0
-        words = (word.lower().strip(punc) for line in infile for word in line.split() if word.strip(punc).isalpha())
         for idx, word in enumerate(words):
             add_unique(word)
             if word not in self.common_words:
