@@ -27,7 +27,6 @@ You can also provide a list of url links (with each link on a separate line) wri
 class ArgsHandler(object):
     """Handle the command line arguments."""
     def __init__(self, args):
-        self.sentences = 0
         self.args = args
         if not args.infile:
             with sys.stdin as f:
@@ -58,7 +57,7 @@ class ArgsHandler(object):
         else:
             with open(arg) as f:
                 data = f.read()
-        self.sentences += data.count('.') + data.count('!') + data.count('?')
+        self.sentences = data.count('.') + data.count('!') + data.count('?')
         self.run_check(data, arg)
 
     def run_check(self, data, name):

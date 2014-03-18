@@ -56,13 +56,13 @@ class Checktext(object):
         uncommon = set()
         add_un = uncommon.add
         difficult = 0
-        for idx, word in enumerate(words):
+        self.total = len(words)
+        for word in words:
             add_unique(word)
             if word not in self.common_words:
                 add_un(word)
             if word not in self.dale_chall_words:
                 difficult += 1
-        self.total = idx + 1
         dale_chall_score = round(self.dale_chall(difficult, sentences), 1)
         uniq_len = len(unique_words)
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
