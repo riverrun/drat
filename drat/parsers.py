@@ -31,19 +31,18 @@ class HtmlParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag == 'body':
             self.body = True
-        if tag == 'script':
-            self.get_data = False
+        if tag == 'p':
+            self.get_data = True
 
     def handle_endtag(self, tag):
         if tag == 'body':
             self.body = False
-        if tag == 'script':
-            self.get_data = True
+        if tag == 'p':
+            self.get_data = False
 
     def handle_data(self, data):
         if self.body and self.get_data:
             self.text.append(data)
-            self.sentences += data.count('.') + data.count('!') + data.count('?')
 
 class DocParser(object):
     """Parse docx and odf files."""
@@ -60,4 +59,4 @@ class DocParser(object):
         zfile = zipfile.ZipFile(self.infile)
         body = ET.fromstring(zfile.read(docid))
         text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
-        return text
+        return text.encode('utf-8')

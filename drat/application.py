@@ -45,9 +45,8 @@ class ArgsHandler(object):
         html = response.text
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
-        data = url_reader.text
-        self.sentences = url_reader.sentences
-        self.run_check(data, arg)
+        data = ''.join(url_reader.text)
+        self.run_check(data.encode('utf-8'), arg)
 
     def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
@@ -55,14 +54,15 @@ class ArgsHandler(object):
             doc_reader = parsers.DocParser(arg)
             data = doc_reader.get_doctype()
         else:
-            with open(arg) as f:
+            with open(arg, 'rb') as f:
                 data = f.read()
-        self.sentences = data.count('.') + data.count('!') + data.count('?')
         self.run_check(data, arg)
 
     def run_check(self, data, name):
-        punc = '!"%\'(),-.:;?[]_'
-        words = [word.lower().strip(punc) for word in data.split() if word.strip(punc).isalpha()]
+        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
+        self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
+        lines = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
+        words = [word.lower() for word in lines.decode('utf-8').split()]
         check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
         check.load_file(words, self.sentences)
 

@@ -21,7 +21,7 @@ from distutils.core import setup
 
 setup(
     name = 'drat',
-    version = '0.1.0',
+    version = '0.1.1',
     packages = ['drat'],
     scripts = ['bin/drat'],
     data_files = [
