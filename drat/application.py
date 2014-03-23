@@ -62,7 +62,7 @@ class ArgsHandler(object):
         punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
         self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
         lines = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        words = [word.lower() for word in lines.decode('utf-8').split()]
+        words = lines.decode('utf-8').lower().split()
         check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
         check.load_file(words, self.sentences)
 

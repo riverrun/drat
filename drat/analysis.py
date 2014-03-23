@@ -51,18 +51,14 @@ class Checktext(object):
 
     def load_file(self, words, sentences):
         """Count uncommon words and difficult words in file."""
-        unique_words = set()
-        add_unique = unique_words.add
-        uncommon = set()
-        add_un = uncommon.add
-        difficult = 0
+        unique_words = set(words)
+        uncommon = unique_words.difference(self.common_words)
+        #difficult = 0
         self.total = len(words)
-        for word in words:
-            add_unique(word)
-            if word not in self.common_words:
-                add_un(word)
-            if word not in self.dale_chall_words:
-                difficult += 1
+        difficult = sum(1 for word in words if word not in self.dale_chall_words)
+        #for word in words:
+            #if word not in self.dale_chall_words:
+                #difficult += 1
         dale_chall_score = round(self.dale_chall(difficult, sentences), 1)
         uniq_len = len(unique_words)
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
@@ -83,7 +79,7 @@ class Checktext(object):
                 self.read_grade = self.dale_chall_grade[key]
                 break
         else:
-            self.read_grade = 'Grades 16 and above'
+            self.read_grade = 'Grade 16 and above'
         self.message = 'Report for {}.\n'.format(self.name)
         self.message += 'There are {:d} uncommon words in this text.\n'.format(uncom_len)
         self.message += 'This is out of a total of {:d} unique words.\n'.format(uniq_len)
