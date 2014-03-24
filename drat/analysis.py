@@ -18,6 +18,7 @@
 import os
 import json
 import textwrap
+from collections import Counter
 
 base_dir = '/usr/local/share' if 'local' in os.path.split(__file__)[0].split('/') else '/usr/share'
 
@@ -53,19 +54,19 @@ class Checktext(object):
         """Count uncommon words and difficult words in file."""
         unique_words = set(words)
         uncommon = unique_words.difference(self.common_words)
-        #difficult = 0
-        self.total = len(words)
-        difficult = sum(1 for word in words if word not in self.dale_chall_words)
-        #for word in words:
-            #if word not in self.dale_chall_words:
-                #difficult += 1
-        dale_chall_score = round(self.dale_chall(difficult, sentences), 1)
+        dchall_set = unique_words.intersection(self.dale_chall_words)
+        word_count = Counter(words)
+        self.total = sum(word_count.values())
+        for word in dchall_set:
+            word_count.pop(word)
+        diff_count = sum(word_count.values())
+        dale_chall_score = round(self.dale_chall(diff_count, sentences), 1)
         uniq_len = len(unique_words)
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
 
-    def dale_chall(self, difficult, sentences):
+    def dale_chall(self, diff_count, sentences):
         """Calculate Dale-Chall readability score."""
-        pdw = difficult / self.total * 100
+        pdw = diff_count / self.total * 100
         asl = self.total / sentences
         raw = 0.1579 * (pdw) + 0.0496 * asl
         if pdw > 5:
