@@ -18,6 +18,7 @@
 import os
 import json
 import textwrap
+from collections import Counter
 
 base_dir = '/usr/local/share' if 'local' in os.path.split(__file__)[0].split('/') else '/usr/share'
 
@@ -28,6 +29,13 @@ class Checktext(object):
         self.web = web
         self.load_common(wlist)
         self.load_dale_chall()
+
+    def start_check(self, data):
+        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
+        self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
+        data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
+        words = WordCount(data.decode('utf-8').lower().split())
+        self.load_file(words, self.sentences)
 
     def load_common(self, wlist):
         """Create the dictionary of common words."""
@@ -85,3 +93,19 @@ class Checktext(object):
             self.message += textwrap.fill('   '.join(list(uncommon)), width=80)
         if not self.web:
             print(self.message)
+
+class WordCount(Counter):
+    def __init__(self, iterable=None, **kwds):
+        Counter.__init__(self, iterable, **kwds)
+
+    def differ(self, other):
+        """Compares this instance with a set and creates a Counter with words and values
+        that are not present in that set.
+        """
+        if not isinstance(other, set):
+            return NotImplemented
+        result = Counter()
+        for elem, count in self.items():
+            if elem not in other:
+                result[elem] = count
+        return result

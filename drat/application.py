@@ -18,7 +18,6 @@
 import argparse
 import sys
 import requests
-from collections import Counter
 from . import analysis, parsers
 
 usage_info = """The file, or url, you have chosen will be compared with a list of
@@ -47,7 +46,8 @@ class ArgsHandler(object):
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
         data = ''.join(url_reader.text)
-        self.run_check(data.encode('utf-8'), arg)
+        check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
+        check.start_check(data.encode('utf-8'))
 
     def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
@@ -57,43 +57,8 @@ class ArgsHandler(object):
         else:
             with open(arg, 'rb') as f:
                 data = f.read()
-        self.run_check(data, arg)
-
-    def run_check(self, data, name):
-        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
-        self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
-        data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        words = WordCount(data.decode('utf-8').lower().split())
-        check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
-        check.load_file(words, self.sentences)
-
-class WordCount(Counter):
-    def __init__(self, iterable=None, **kwds):
-        Counter.__init__(self, iterable, **kwds)
-
-    def intersect(self, other):
-        """Compares this instance with a set and creates a Counter with words and values
-        that are present in a set.
-        """
-        if not isinstance(other, set):
-            return NotImplemented
-        result = Counter()
-        for elem, count in self.items():
-            if elem in other:
-                result[elem] = count
-        return result
-
-    def differ(self, other):
-        """Compares this instance with a set and creates a Counter with words and values
-        that are not present in a set.
-        """
-        if not isinstance(other, set):
-            return NotImplemented
-        result = Counter()
-        for elem, count in self.items():
-            if elem not in other:
-                result[elem] = count
-        return result
+        check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
+        check.start_check(data)
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
