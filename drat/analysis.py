@@ -35,7 +35,7 @@ class Checktext(object):
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
         with open(self.com_dict) as words_file:
             data = json.load(words_file)
-        self.common_words = set(data)
+        self.common_words = Counter(data)
         if wlist:
             for new_words in wlist:
                 new_dict = {word.strip() for word in new_words.splitlines()}
@@ -46,23 +46,21 @@ class Checktext(object):
         self.dale_chall_dict = os.path.join(base_dir, 'drat', 'dale_chall.json')
         with open(self.dale_chall_dict) as words_file:
             data = json.load(words_file)
-        self.dale_chall_words = set(data)
+        self.dale_chall_words = Counter(data)
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
     def load_file(self, words, sentences):
         """Count uncommon words and difficult words in file."""
-        unique_words = set(words)
-        uncommon = unique_words.difference(self.common_words)
-        dchall_set = unique_words.intersection(self.dale_chall_words)
-        word_count = Counter(words)
-        self.total = sum(word_count.values())
-        for word in dchall_set:
-            word_count.pop(word)
-        diff_count = sum(word_count.values())
+        uniq_len = len(words)
+        self.total = sum(words.values())
+        common = words & self.common_words
+        for word in common:
+            words.pop(word)
+        dchall_set = words & self.dale_chall_words
+        diff_count = self.total - sum(dchall_set.values())
         dale_chall_score = round(self.dale_chall(diff_count, sentences), 1)
-        uniq_len = len(unique_words)
-        self.fmt_output(uniq_len, uncommon, dale_chall_score)
+        self.fmt_output(uniq_len, words, dale_chall_score)
 
     def dale_chall(self, diff_count, sentences):
         """Calculate Dale-Chall readability score."""

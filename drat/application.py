@@ -18,6 +18,7 @@
 import argparse
 import sys
 import requests
+from collections import Counter
 from . import analysis, parsers
 
 usage_info = """The file, or url, you have chosen will be compared with a list of
@@ -62,7 +63,7 @@ class ArgsHandler(object):
         punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
         self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
         data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        words = data.decode('utf-8').lower().split()
+        words = Counter(data.decode('utf-8').lower().split())
         check = analysis.Checktext(name, self.args.wlist, self.args.verb, False)
         check.load_file(words, self.sentences)
 
