@@ -30,13 +30,6 @@ class Checktext(object):
         self.load_common(wlist)
         self.load_dale_chall()
 
-    def start_check(self, data):
-        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
-        self.sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
-        data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        words = WordCount(data.decode('utf-8').lower().split())
-        self.load_file(words, self.sentences)
-
     def load_common(self, wlist):
         """Create the dictionary of common words."""
         self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
@@ -57,12 +50,16 @@ class Checktext(object):
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
-    def load_file(self, words, sentences):
-        """Count uncommon words and difficult words in file."""
+    def run_check(self, data):
+        """Check for uncommon words and difficult words in file."""
+        sentences = data.count(b'.') + data.count(b'!') + data.count(b'?')
+        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
+        data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
+        words = Counter(data.decode('utf-8').lower().split())
         uniq_len = len(words)
         self.total = sum(words.values())
-        uncommon = words.differ(self.common_words)
-        dchall_set = words.differ(self.dale_chall_words)
+        uncommon = Counter({word: count for word, count in words.items() if word not in self.common_words})
+        dchall_set = Counter({word: count for word, count in words.items() if word not in self.dale_chall_words})
         diff_count = sum(dchall_set.values())
         dale_chall_score = round(self.dale_chall(diff_count, sentences), 1)
         self.fmt_output(uniq_len, uncommon, dale_chall_score)
@@ -90,22 +87,8 @@ class Checktext(object):
         self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
         if self.verb:
             self.message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
-            self.message += textwrap.fill('   '.join(list(uncommon)), width=80)
+            for item in uncommon.most_common():
+                self.message += '{}: {}  '.format(item[0], item[1])
         if not self.web:
-            print(self.message)
-
-class WordCount(Counter):
-    def __init__(self, iterable=None, **kwds):
-        Counter.__init__(self, iterable, **kwds)
-
-    def differ(self, other):
-        """Compares this instance with a set and creates a Counter with words and values
-        that are not present in that set.
-        """
-        if not isinstance(other, set):
-            return NotImplemented
-        result = Counter()
-        for elem, count in self.items():
-            if elem not in other:
-                result[elem] = count
-        return result
+            for line in self.message.splitlines():
+                print(textwrap.fill(line, width=120))

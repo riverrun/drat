@@ -30,8 +30,7 @@ class ArgsHandler(object):
         self.args = args
         if not args.infile:
             with sys.stdin as f:
-                data = f.read()
-            self.args.infile = [arg for arg in data.splitlines()]
+                self.args.infile = [arg.strip() for arg in f]
 
     def args_handler(self):
         for arg in self.args.infile:
@@ -47,7 +46,7 @@ class ArgsHandler(object):
         url_reader.feed(html)
         data = ''.join(url_reader.text)
         check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
-        check.start_check(data.encode('utf-8'))
+        check.run_check(data.encode('utf-8'))
 
     def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
@@ -58,7 +57,7 @@ class ArgsHandler(object):
             with open(arg, 'rb') as f:
                 data = f.read()
         check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
-        check.start_check(data)
+        check.run_check(data)
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)

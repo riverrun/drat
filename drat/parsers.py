@@ -51,11 +51,9 @@ class DocParser(object):
 
     def get_doctype(self):
         if self.infile.endswith('.docx'):
-            return self.parse_doc('word/document.xml')
+            docid = 'word/document.xml'
         else:
-            return self.parse_doc('content.xml')
-
-    def parse_doc(self, docid):
+            docid = 'content.xml'
         zfile = zipfile.ZipFile(self.infile)
         body = ET.fromstring(zfile.read(docid))
         text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
