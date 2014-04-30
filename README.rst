@@ -14,8 +14,8 @@ of these uncommon words (if you choose the verbose option).
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text
 files and urls.
 
-You can also use analyze multiple texts / links by creating a text file
-with the links written in it.
+You can also analyze multiple texts / links by creating a text file
+with the filenames / links written in it.
 
 Use
 ~~~
@@ -24,11 +24,10 @@ drat [-h] [-v] [-w wordlist-file] file-or-url
 
 -  multiple files, or urls, can be analyzed
 -  the files can be text files, docx files, or odf files
--  a list of urls, or files, can be redirected to drat: e.g., drat <
-   list-of-urls.txt
+-  a list of urls, or files, written in a text file can be redirected to drat:
+   e.g., drat < list-of-urls.txt
 -  -w use an additional wordlist(s)
--  This wordlist needs to be a text file with each word on a separate
-   line
+-  This wordlist needs to be a text file with each word on a separate line
 -  More than one wordlist can be used
 
 For example, the following command will analyze an office (Writer)
@@ -72,14 +71,11 @@ Todo
 
 -  More support for analyzing the complexity of texts.
 -  Support other languages.
--  Whatever feature requests people have - as long as it's not too much
-   work :)
 
 Dependencies
 ~~~~~~~~~~~~
 
-Python3 and requests (python3-requests if you are on a debian-based
-system).
+Python3 and requests.
 
 Name
 ~~~~

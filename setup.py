@@ -22,7 +22,7 @@ with open('README.rst') as f:
 
 setup(
     name = 'drat',
-    version = '0.1.4',
+    version = '0.1.5',
     author = 'David Whitlock',
     author_email = 'alovedalongthe@gmail.com',
     url = 'https://github.com/riverrun/drat',
@@ -35,12 +35,10 @@ setup(
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Console',
-        'Environment :: Web Environment',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GPLv3 License',
         'Operating System :: POSIX',
-        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Topic :: Office/Business',
     ],
