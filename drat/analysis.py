@@ -20,19 +20,18 @@ import json
 import textwrap
 from collections import Counter
 
-base_dir = '/usr/local/share' if 'local' in os.path.split(__file__)[0].split('/') else '/usr/share'
-
 class Checktext(object):
     def __init__(self, name, wlist, verb, web):
         self.name = name
         self.verb = verb
         self.web = web
+        self.base_dir = os.path.abspath(os.path.dirname(__file__))
         self.load_common(wlist)
         self.load_dale_chall()
 
     def load_common(self, wlist):
         """Create the dictionary of common words."""
-        self.com_dict = os.path.join(base_dir, 'drat', 'EN_vocab.json')
+        self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.json')
         with open(self.com_dict) as words_file:
             data = json.load(words_file)
         self.common_words = set(data)
@@ -43,7 +42,7 @@ class Checktext(object):
 
     def load_dale_chall(self):
         """Create the dictionary of words, and grade dictionary, for the Dale-Chall readability test."""
-        self.dale_chall_dict = os.path.join(base_dir, 'drat', 'dale_chall.json')
+        self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.json')
         with open(self.dale_chall_dict) as words_file:
             data = json.load(words_file)
         self.dale_chall_words = set(data)

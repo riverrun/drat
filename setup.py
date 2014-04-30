@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 # Authors: David Whitlock <alovedalongthe@gmail.com>
 # A simple text analysis tool
 # Copyright (C) 2013-2014 David Whitlock
@@ -17,19 +15,38 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from distutils.core import setup
+from setuptools import setup
+
+with open('README.rst') as f:
+    long_description = f.read()
 
 setup(
     name = 'drat',
     version = '0.1.4',
-    packages = ['drat'],
-    scripts = ['bin/drat'],
-    data_files = [
-        ('share/drat', ['data/EN_vocab.json', 'data/dale_chall.json']),
-        ],
     author = 'David Whitlock',
     author_email = 'alovedalongthe@gmail.com',
     url = 'https://github.com/riverrun/drat',
     description = 'A reading text analysis tool',
+    long_description = long_description,
     license = 'GPLv3',
+    packages = ['drat'],
+    include_package_data = True,
+    install_requires = ['requests'],
+    classifiers = [
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Environment :: Web Environment',
+        'Intended Audience :: End Users/Desktop',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GPLv3 License',
+        'Operating System :: POSIX',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Topic :: Office/Business',
+    ],
+    entry_points = {
+        'console_scripts': [
+            'drat = drat.application:main',
+            ]
+        },
 )
