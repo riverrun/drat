@@ -7,9 +7,9 @@ Features
 ~~~~~~~~
 
 Drat is a tool that analyzes reading texts and produces a brief report
-which gives a readability score and the number of uncommon words
-(according to the General Service List) in the text. It also lists all
-of these uncommon words (if you choose the verbose option).
+which gives a readability score (according to the Dale-Chall readability
+formula) and the number of uncommon words (based on the General Service List)
+in the text. It also lists all of these uncommon words (if you choose the verbose option).
 
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text
 files and urls.
@@ -69,6 +69,7 @@ of the uncommon words.
 Todo
 ~~~~
 
+-  Improve html parsing.
 -  More support for analyzing the complexity of texts.
 -  Support other languages.
 

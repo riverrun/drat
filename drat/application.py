@@ -18,7 +18,10 @@
 import argparse
 import sys
 import requests
-from . import analysis, parsers
+import zipfile
+import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
+from . import analysis
 
 usage_info = """The file, or url, you have chosen will be compared with a list of
 common English words, and a report of the results will be saved in the current working directory.
@@ -42,7 +45,7 @@ class ArgsHandler(object):
     def check_url(self, arg):
         response = requests.get(arg)
         html = response.text
-        url_reader = parsers.HtmlParser()
+        url_reader = HtmlParser()
         url_reader.feed(html)
         data = ''.join(url_reader.text)
         check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
@@ -51,13 +54,53 @@ class ArgsHandler(object):
     def check_file(self, arg):
         exts = ('.docx', '.odt', '.ods', '.odp')
         if arg.endswith(exts):
-            doc_reader = parsers.DocParser(arg)
+            doc_reader = DocParser(arg)
             data = doc_reader.get_doctype()
         else:
             with open(arg, 'rb') as f:
                 data = f.read()
         check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
         check.run_check(data)
+
+class HtmlParser(HTMLParser):
+    """Parse urls."""
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.body = False
+        self.get_data = True
+        self.text = []
+        self.sentences = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'body':
+            self.body = True
+        if tag == 'p':
+            self.get_data = True
+
+    def handle_endtag(self, tag):
+        if tag == 'body':
+            self.body = False
+        if tag == 'p':
+            self.get_data = False
+
+    def handle_data(self, data):
+        if self.body and self.get_data:
+            self.text.append(data)
+
+class DocParser(object):
+    """Parse docx and odf files."""
+    def __init__(self, infile):
+        self.infile = infile
+
+    def get_doctype(self):
+        if self.infile.endswith('.docx'):
+            docid = 'word/document.xml'
+        else:
+            docid = 'content.xml'
+        zfile = zipfile.ZipFile(self.infile)
+        body = ET.fromstring(zfile.read(docid))
+        text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
+        return text.encode('utf-8')
 
 def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
