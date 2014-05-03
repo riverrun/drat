@@ -76,12 +76,16 @@ class HtmlParser(HTMLParser):
             self.body = True
         if tag == 'p':
             self.get_data = True
+        if tag == 'script' or tag == 'a':
+            self.get_data = False
 
     def handle_endtag(self, tag):
         if tag == 'body':
             self.body = False
         if tag == 'p':
             self.get_data = False
+        if tag == 'script' or tag == 'a':
+            self.get_data = True
 
     def handle_data(self, data):
         if self.body and self.get_data:

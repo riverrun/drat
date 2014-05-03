@@ -48,13 +48,13 @@ it:
 
 ::
 
-    drat http://www.ibras.dk/montypython/episode24.htm
+    drat url_you_want_analyzed.html
 
 It is also possible to analyze several files in one command:
 
 ::
 
-    drat CastleAaaarrrggh.txt LuvinmyTummy.docx PininFjords.odt
+    drat text_file.txt word_document.docx open_office_file.odt
 
 The following command uses a text file with links in it (one link per
 line) and parses the links in it:
