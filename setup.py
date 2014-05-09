@@ -21,30 +21,33 @@ with open('README.rst') as f:
     long_description = f.read()
 
 setup(
-    name = 'drat',
-    version = '0.1.7',
-    author = 'David Whitlock',
-    author_email = 'alovedalongthe@gmail.com',
-    url = 'https://github.com/riverrun/drat',
-    description = 'A reading text analysis tool',
-    long_description = long_description,
-    license = 'GPLv3',
-    packages = ['drat'],
-    include_package_data = True,
-    zip_safe = False,
-    platforms = 'any',
-    install_requires = ['requests'],
-    classifiers = [
+    name='drat',
+    version='0.1.7',
+    author='David Whitlock',
+    author_email='alovedalongthe@gmail.com',
+    url='https://github.com/riverrun/drat',
+    description='A reading text analysis tool',
+    long_description=long_description,
+    license='GPLv3',
+    packages=['drat'],
+    include_package_data=True,
+    zip_safe=False,
+    platforms='any',
+    install_requires=['requests'],
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Topic :: Education',
         'Topic :: Office/Business',
     ],
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'drat = drat.application:main',
             ]

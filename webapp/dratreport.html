@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Text analysis report{% endblock %}
+{% block content %}
+<h3>Reading text analyzer</h3>
+{% for item in message %}
+<p>{{ item }}</p>
+{% endfor %}
+{% endblock %}

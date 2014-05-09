@@ -17,6 +17,9 @@ files and urls.
 You can also analyze multiple texts / links by creating a text file
 with the filenames / links written in it.
 
+A simple example of how drat can be used in a web application is provided in the
+webapp directory.
+
 Use
 ~~~
 
