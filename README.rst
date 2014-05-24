@@ -40,11 +40,17 @@ document called 'NorwegianBlue.odt':
 
     drat NorwegianBlue.odt
 
-The -w option will let you filter out additional words:
+The -w (wordlist-file) option will let you filter out additional words:
 
 ::
 
     drat -w euphemisms_death.txt NorwegianBlue.odt 
+
+To use more than one wordlist, you need to quote them:
+
+::
+
+    drat -w "euphemisms_death.txt customer_service.txt" NorwegianBlue.odt 
 
 And this command will download the following url and analyze the text in
 it:
@@ -59,8 +65,8 @@ It is also possible to analyze several files in one command:
 
     drat text_file.txt word_document.docx open_office_file.odt
 
-The following command uses a text file with links in it (one link per
-line) and parses the links in it:
+The following command is an example of redirecting the output of the contents of
+a text file. The text file has one link per line (url or file) and each link in it is parsed:
 
 ::
 
@@ -72,9 +78,10 @@ of the uncommon words.
 Todo
 ~~~~
 
+-  Whatever feature requests anyone has (as long as it's not too much work).
 -  Improve html parsing.
 -  More support for analyzing the complexity of texts.
--  Support other languages.
+-  Maybe support other languages.
 
 Dependencies
 ~~~~~~~~~~~~

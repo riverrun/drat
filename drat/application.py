@@ -110,7 +110,7 @@ def main():
     parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
     parser.add_argument('infile', type=str, nargs='*', help='Name of file(s), or url(s) you want checked.')
     parser.add_argument('-v', '--verbose', dest='verb', action='store_true', help='Print more detailed information.')
-    parser.add_argument('-w', '--wordlist', dest='wlist', type=argparse.FileType('r'),
+    parser.add_argument('-w', '--wordlist', dest='wlist', type=str,
             nargs='?', help='Name of additional wordlist(s) you want to use.')
     args = parser.parse_args()
     handler = ArgsHandler(args)
