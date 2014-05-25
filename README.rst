@@ -23,7 +23,7 @@ webapp directory.
 Use
 ~~~
 
-drat [-h] [-v] [-w wordlist-file] file-or-url
+drat [--help] [-v] [-w wordlist-file] file-or-url
 
 -  multiple files, or urls, can be analyzed
 -  the files can be text files, docx files, or odf files
@@ -46,11 +46,11 @@ The -w (wordlist-file) option will let you filter out additional words:
 
     drat -w euphemisms_death.txt NorwegianBlue.odt 
 
-To use more than one wordlist, you need to quote them:
+You can use the -w option multiple times if you want to use more than one wordlist:
 
 ::
 
-    drat -w "euphemisms_death.txt customer_service.txt" NorwegianBlue.odt 
+    drat -w euphemisms_death.txt -w customer_service.txt NorwegianBlue.odt 
 
 And this command will download the following url and analyze the text in
 it:

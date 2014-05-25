@@ -58,7 +58,11 @@ class DocParser(object):
             docid = 'word/document.xml'
         else:
             docid = 'content.xml'
-        zfile = zipfile.ZipFile(self.infile)
+        try:
+            zfile = zipfile.ZipFile(self.infile)
+        except:
+            print('Sorry, can\'t open {}.'.format(self.infile))
+            return
         body = ET.fromstring(zfile.read(docid))
         text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
         return text.encode('utf-8')

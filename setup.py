@@ -22,7 +22,7 @@ with open('README.rst') as f:
 
 setup(
     name='drat',
-    version='0.1.8',
+    version='0.2.0',
     author='David Whitlock',
     author_email='alovedalongthe@gmail.com',
     url='https://github.com/riverrun/drat',
@@ -33,7 +33,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=['requests'],
+    install_requires=['requests', 'click'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -49,7 +49,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'drat = drat.application:main',
+            'drat = drat.application:cli',
             ]
         },
 )

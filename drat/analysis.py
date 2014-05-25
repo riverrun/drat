@@ -36,7 +36,10 @@ class Checktext(object):
             data = json.load(words_file)
         self.common_words = set(data)
         if wlist:
-            new_words = self.load_wlists(wlist)
+            new_words = ''
+            for wl in wlist:
+                with open(wl) as f:
+                    new_words += f.read()
             if new_words:
                 new_dict = {word.strip() for word in new_words.splitlines()}
                 self.common_words.update(new_dict)
@@ -49,17 +52,6 @@ class Checktext(object):
         self.dale_chall_words = set(data)
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
-
-    def load_wlists(self, wlist):
-        new_words = ''
-        try:
-            with open(wlist) as f:
-                new_words = f.read()
-        except:
-            for wl in wlist.split():
-                with open(wl) as f:
-                    new_words += f.read()
-        return new_words
 
     def run_check(self, data):
         """Check for uncommon words and difficult words in file."""

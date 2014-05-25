@@ -15,56 +15,55 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-import argparse
 import sys
+import click
 import requests
 from . import analysis, parsers
 
-usage_info = """The file, or url, you have chosen will be compared with a list of
-common English words, and a report of the results will be saved in the current working directory.
-You can also provide a list of url links (with each link on a separate line) written in a text file."""
-
-class ArgsHandler(object):
-    """Handle the command line arguments."""
-    def __init__(self, args):
-        self.args = args
-        if not args.infile:
-            with sys.stdin as f:
-                self.args.infile = [arg.strip() for arg in f]
-
-    def args_handler(self):
-        for arg in self.args.infile:
-            if arg.startswith('http'):
-                self.check_url(arg)
-            else:
-                self.check_file(arg)
-
-    def check_url(self, arg):
+def check_url(arg, wlist, verb):
+    try:
         response = requests.get(arg)
         html = response.text
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
         data = ''.join(url_reader.text)
-        check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
-        check.run_check(data.encode('utf-8'))
+    except:
+        print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
+        return
+    check = analysis.Checktext(arg, wlist, verb, False)
+    check.run_check(data.encode('utf-8'))
 
-    def check_file(self, arg):
-        exts = ('.docx', '.odt', '.ods', '.odp')
-        if arg.endswith(exts):
-            doc_reader = parsers.DocParser(arg)
-            data = doc_reader.get_doctype()
-        else:
+def check_file(arg, wlist, verb):
+    exts = ('.docx', '.odt', '.ods', '.odp')
+    if arg.endswith(exts):
+        doc_reader = parsers.DocParser(arg)
+        data = doc_reader.get_doctype()
+    else:
+        try:
             with open(arg, 'rb') as f:
                 data = f.read()
-        check = analysis.Checktext(arg, self.args.wlist, self.args.verb, False)
-        check.run_check(data)
+        except:
+            print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
+            return
+    check = analysis.Checktext(arg, wlist, verb, False)
+    check.run_check(data)
 
-def main():
-    parser = argparse.ArgumentParser(description='Text analysis tool', prog='drat', epilog=usage_info)
-    parser.add_argument('infile', type=str, nargs='*', help='Name of file(s), or url(s) you want checked.')
-    parser.add_argument('-v', '--verbose', dest='verb', action='store_true', help='Print more detailed information.')
-    parser.add_argument('-w', '--wordlist', dest='wlist', type=str,
-            nargs='?', help='Name of additional wordlist(s) you want to use.')
-    args = parser.parse_args()
-    handler = ArgsHandler(args)
-    handler.args_handler()
+@click.command()
+@click.argument('filename', required=sys.stdin.isatty(), nargs=-1)
+@click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
+        help='Name of wordlist file(s) to be used as an additional filter.')
+@click.option('--verbose', '-v', count=True, help='Provide more detailed information.')
+def cli(filename, wordlist, verbose):
+    """FILENAME is the file, or url, you have chosen. This will be compared with
+    lists of common English words, and a report of the results will be saved in
+    the current working directory. It is possible to check multiple files.\n
+    You can also provide a list of url links (with each link on a separate line)
+    written in a text file. Each link in the file will then be checked."""
+    if not filename:
+        with sys.stdin as f:
+            filename = [arg.strip() for arg in f]
+    for arg in filename:
+        if arg.startswith('http'):
+            check_url(arg, wordlist, verbose)
+        else:
+            check_file(arg, wordlist, verbose)
