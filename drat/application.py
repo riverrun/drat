@@ -63,7 +63,7 @@ def cli(filename, wordlist, verbose):
         with sys.stdin as f:
             filename = [arg.strip() for arg in f]
     for arg in filename:
-        if arg.startswith('http'):
+        if arg.startswith(('http', 'ftp')):
             check_url(arg, wordlist, verbose)
         else:
             check_file(arg, wordlist, verbose)
