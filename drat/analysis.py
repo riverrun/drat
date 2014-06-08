@@ -65,7 +65,7 @@ class Checktext(object):
         dchall_set = Counter({word: count for word, count in words.items() if word not in self.dale_chall_words})
         diff_count = sum(dchall_set.values())
         dale_chall_score = round(self.dale_chall(diff_count, sentences), 1)
-        self.fmt_output(uniq_len, uncommon, dale_chall_score)
+        return uniq_len, uncommon, dale_chall_score
 
     def dale_chall(self, diff_count, sentences):
         """Calculate Dale-Chall readability score."""

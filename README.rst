@@ -86,7 +86,7 @@ Todo
 Dependencies
 ~~~~~~~~~~~~
 
-Python3 and requests.
+Python3, click and requests.
 
 Name
 ~~~~

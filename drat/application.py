@@ -31,7 +31,8 @@ def check_url(arg, wlist, verb):
         print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
         return
     check = analysis.Checktext(arg, wlist, verb, False)
-    check.run_check(data.encode('utf-8'))
+    result = check.run_check(data.encode('utf-8'))
+    check.fmt_output(*result)
 
 def check_file(arg, wlist, verb):
     exts = ('.docx', '.odt', '.ods', '.odp')
@@ -46,7 +47,8 @@ def check_file(arg, wlist, verb):
             print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
             return
     check = analysis.Checktext(arg, wlist, verb, False)
-    check.run_check(data)
+    result = check.run_check(data)
+    check.fmt_output(*result)
 
 @click.command()
 @click.argument('filename', required=sys.stdin.isatty(), nargs=-1)
