@@ -41,8 +41,8 @@ def check_file(arg, wlist, verb):
         data = doc_reader.get_doctype()
     else:
         try:
-            with open(arg, 'rb') as f:
-                data = f.read()
+            with open(arg) as f:
+                data = f.read().encode('ascii', 'ignore')
         except:
             print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
             return

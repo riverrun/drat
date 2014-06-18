@@ -65,4 +65,4 @@ class DocParser(object):
             return
         body = ET.fromstring(zfile.read(docid))
         text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
-        return text.encode('utf-8')
+        return text.encode('ascii', 'ignore')

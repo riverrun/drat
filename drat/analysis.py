@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import sys
 import os
 import json
 import textwrap
@@ -55,42 +56,55 @@ class Checktext(object):
 
     def run_check(self, data):
         """Check for uncommon words and difficult words in file."""
+        if not data:
+            sys.exit(1)
         sentences = data.count(b'.') + data.count(b'!') + data.count(b'?') or 1
         punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
         data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        words = Counter(data.decode('utf-8').lower().split())
-        uniq_len = len(words)
-        self.total = sum(words.values())
-        uncommon = Counter({word: count for word, count in words.items() if word not in self.common_words})
-        dchall_set = Counter({word: count for word, count in words.items() if word not in self.dale_chall_words})
-        diff_count = sum(dchall_set.values())
-        dale_chall_score = round(self.dale_chall(diff_count, sentences), 1)
-        return uniq_len, uncommon, dale_chall_score
+        chars = len(data)
+        words = data.decode('utf-8').lower().split()
+        num_words = len(words)
+        chars -= num_words
+        w_dict = Counter(words)
+        self.gsl_score(w_dict)
+        non_dchall_set = Counter({word: count for word, count in w_dict.items() if word not in self.dale_chall_words})
+        diff_count = sum(non_dchall_set.values())
+        dc_score = round(self.dale_chall(diff_count, num_words, sentences), 1)
+        cli_score = round(self.coleman_liau(chars, num_words, sentences), 1)
+        return dc_score, cli_score
 
-    def dale_chall(self, diff_count, sentences):
+    def gsl_score(self, w_dict):
+        self.uniq_len = len(w_dict)
+        self.uncommon = Counter({word: count for word, count in w_dict.items() if word not in self.common_words})
+        self.uncom_len = len(self.uncommon)
+
+    def dale_chall(self, diff_count, words, sentences):
         """Calculate Dale-Chall readability score."""
-        pdw = diff_count / self.total * 100
-        asl = self.total / sentences
+        pdw = diff_count / words * 100
+        asl = words / sentences
         raw = 0.1579 * (pdw) + 0.0496 * asl
         if pdw > 5:
             return raw + 3.6365
         return raw
 
-    def fmt_output(self, uniq_len, uncommon, dale_chall_score):
-        uncom_len = len(uncommon)
+    def coleman_liau(self, chars, words, sentences):
+        return 0.0588 * (chars / words * 100) - 0.296 * (sentences / words * 100) - 15.8
+
+    def fmt_output(self, dc_score, cli_score):
         for key in self.dale_chall_grade:
-            if dale_chall_score < key:
+            if dc_score <= key:
                 self.read_grade = self.dale_chall_grade[key]
                 break
         else:
             self.read_grade = 'Grade 16 and above'
         self.message = 'Report for {}.\n'.format(self.name)
-        self.message += 'There are {:d} uncommon words in this text.\n'.format(uncom_len)
-        self.message += 'This is out of a total of {:d} unique words.\n'.format(uniq_len)
-        self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dale_chall_score, self.read_grade)
+        self.message += 'There are {:d} uncommon words in this text.\n'.format(self.uncom_len)
+        self.message += 'This is out of a total of {:d} unique words.\n'.format(self.uniq_len)
+        self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dc_score, self.read_grade)
+        self.message += 'The Coleman-Liau Index is {:.1f}.\n'.format(cli_score)
         if self.verb:
-            self.message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
-            for item in uncommon.most_common():
+            self.message += 'The following {:d} words are not in the list of common words:\n'.format(self.uncom_len)
+            for item in self.uncommon.most_common():
                 self.message += '{}: {}  '.format(item[0], item[1])
         if not self.web:
             for line in self.message.splitlines():

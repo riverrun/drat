@@ -1,7 +1,7 @@
 Drat
 ====
 
-Text analysis tool written in Python 3.
+Text (readability) analysis tool written in Python 3.
 
 Features
 ~~~~~~~~
@@ -10,6 +10,8 @@ Drat is a tool that analyzes reading texts and produces a brief report
 which gives a readability score (according to the Dale-Chall readability
 formula) and the number of uncommon words (based on the General Service List)
 in the text. It also lists all of these uncommon words (if you choose the verbose option).
+
+There is now also experimental support for the Coleman-Liau Readability Index.
 
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text
 files and urls.
@@ -80,7 +82,7 @@ Todo
 
 -  Whatever feature requests anyone has (as long as it's not too much work).
 -  Improve html parsing.
--  More support for analyzing the complexity of texts.
+-  More support for other readability scores.
 -  Maybe support other languages.
 
 Dependencies
@@ -91,7 +93,7 @@ Python3, click and requests.
 Name
 ~~~~
 
-Drat is a recursive acronym which either stands for Drat is a Reading
+Drat is a recursive acronym which either stands for Drat is a Readability
 Analysis Tool or Drat is a Rabid Assessor of Texts.
 
 Author
