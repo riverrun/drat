@@ -66,14 +66,14 @@ class Checktext(object):
         num_words = len(words)
         chars -= num_words
         w_dict = Counter(words)
-        self.gsl_score(w_dict)
+        self.gsl(w_dict)
         non_dchall_set = Counter({word: count for word, count in w_dict.items() if word not in self.dale_chall_words})
         diff_count = sum(non_dchall_set.values())
         dc_score = round(self.dale_chall(diff_count, num_words, sentences), 1)
         cli_score = round(self.coleman_liau(chars, num_words, sentences), 1)
         return dc_score, cli_score
 
-    def gsl_score(self, w_dict):
+    def gsl(self, w_dict):
         self.uniq_len = len(w_dict)
         self.uncommon = Counter({word: count for word, count in w_dict.items() if word not in self.common_words})
         self.uncom_len = len(self.uncommon)
