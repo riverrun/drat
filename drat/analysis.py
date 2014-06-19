@@ -17,7 +17,6 @@
 
 import sys
 import os
-import json
 import textwrap
 from collections import Counter
 
@@ -32,25 +31,27 @@ class Checktext(object):
 
     def load_common(self, wlist):
         """Create the dictionary of common words."""
-        self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.json')
+        self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.txt')
         with open(self.com_dict) as words_file:
-            data = json.load(words_file)
-        self.common_words = set(data)
+            data = words_file.read().encode('ascii', 'ignore')
+        w_dict = {word.strip() for word in data.splitlines()}
+        self.common_words = set(w_dict)
         if wlist:
             new_words = ''
             for wl in wlist:
                 with open(wl) as f:
-                    new_words += f.read()
+                    new_words += f.read().encode('ascii', 'ignore')
             if new_words:
                 new_dict = {word.strip() for word in new_words.splitlines()}
                 self.common_words.update(new_dict)
 
     def load_dale_chall(self):
         """Create the dictionary of words, and grade dictionary, for the Dale-Chall readability test."""
-        self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.json')
+        self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.txt')
         with open(self.dale_chall_dict) as words_file:
-            data = json.load(words_file)
-        self.dale_chall_words = set(data)
+            data = words_file.read().encode('ascii', 'ignore')
+        w_dict = {word.strip() for word in data.splitlines()}
+        self.dale_chall_words = set(w_dict)
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
@@ -62,7 +63,7 @@ class Checktext(object):
         punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
         data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
         chars = len(data)
-        words = data.decode('utf-8').lower().split()
+        words = data.lower().split()
         num_words = len(words)
         chars -= num_words
         w_dict = Counter(words)
