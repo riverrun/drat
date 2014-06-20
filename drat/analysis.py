@@ -17,6 +17,7 @@
 
 import sys
 import os
+import re
 import textwrap
 from collections import Counter
 
@@ -32,15 +33,14 @@ class Checktext(object):
     def load_common(self, wlist):
         """Create the dictionary of common words."""
         self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.txt')
-        with open(self.com_dict) as words_file:
-            data = words_file.read().encode('ascii', 'ignore')
-        w_dict = {word.strip() for word in data.splitlines()}
-        self.common_words = set(w_dict)
+        with open(self.com_dict, 'rb') as words_file:
+            data = words_file.read()
+        self.common_words = {word.strip() for word in data.splitlines()}
         if wlist:
             new_words = ''
             for wl in wlist:
-                with open(wl) as f:
-                    new_words += f.read().encode('ascii', 'ignore')
+                with open(wl, 'rb') as f:
+                    new_words += f.read()
             if new_words:
                 new_dict = {word.strip() for word in new_words.splitlines()}
                 self.common_words.update(new_dict)
@@ -48,10 +48,9 @@ class Checktext(object):
     def load_dale_chall(self):
         """Create the dictionary of words, and grade dictionary, for the Dale-Chall readability test."""
         self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.txt')
-        with open(self.dale_chall_dict) as words_file:
-            data = words_file.read().encode('ascii', 'ignore')
-        w_dict = {word.strip() for word in data.splitlines()}
-        self.dale_chall_words = set(w_dict)
+        with open(self.dale_chall_dict, 'rb') as words_file:
+            data = words_file.read()
+        self.dale_chall_words = {word.strip() for word in data.splitlines()}
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
@@ -60,15 +59,13 @@ class Checktext(object):
         if not data:
             sys.exit(1)
         sentences = data.count(b'.') + data.count(b'!') + data.count(b'?') or 1
-        punc = b'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0123456789'
-        data = data.translate(bytes.maketrans(punc, b' ' * len(punc)))
-        chars = len(data)
-        words = data.lower().split()
-        num_words = len(words)
-        chars -= num_words
-        w_dict = Counter(words)
+        chars = len(re.findall(b'[a-z0-9]', data))
+        num_words = len(re.findall(b'\w+', data))
+        data = re.split(b'[^a-z]+', data)
+        w_dict = Counter(data)
         self.gsl(w_dict)
-        non_dchall_set = Counter({word: count for word, count in w_dict.items() if word not in self.dale_chall_words})
+        non_dchall_set = Counter({word: count for word, count in w_dict.items()
+            if word and word not in self.dale_chall_words})
         diff_count = sum(non_dchall_set.values())
         dc_score = round(self.dale_chall(diff_count, num_words, sentences), 1)
         cli_score = round(self.coleman_liau(chars, num_words, sentences), 1)
@@ -76,7 +73,8 @@ class Checktext(object):
 
     def gsl(self, w_dict):
         self.uniq_len = len(w_dict)
-        self.uncommon = Counter({word: count for word, count in w_dict.items() if word not in self.common_words})
+        self.uncommon = Counter({word: count for word, count in w_dict.items()
+            if word and word not in self.common_words})
         self.uncom_len = len(self.uncommon)
 
     def dale_chall(self, diff_count, words, sentences):

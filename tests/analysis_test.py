@@ -16,7 +16,7 @@ class TestEmpty(unittest.TestCase):
     def test_raw_data(self):
         check = Checktext('None.txt', wlist=None, verb=False, web=False)
         result = check.run_check(b'small data')
-        self.assertEqual(result, (0.1, -7.1))
+        self.assertEqual(result, (0.1, -4.1))
 
 class TestParrot(unittest.TestCase):
     def setUp(self):
@@ -31,7 +31,7 @@ class TestParrot(unittest.TestCase):
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (7.8, 3.7))
+        self.assertEqual(result, (7.3, -0.4))
 
 class TestGrade1(unittest.TestCase):
     def setUp(self):
@@ -46,7 +46,7 @@ class TestGrade1(unittest.TestCase):
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (4.9, 2.6))
+        self.assertEqual(result, (5.7, -0.2))
 
 class TestGrade5(unittest.TestCase):
     def setUp(self):
@@ -61,7 +61,7 @@ class TestGrade5(unittest.TestCase):
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (6.7, 8.4))
+        self.assertEqual(result, (7.3, 6.6))
 
 class TestGrade13(unittest.TestCase):
     def setUp(self):
@@ -76,7 +76,7 @@ class TestGrade13(unittest.TestCase):
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (7.8, 15.9))
+        self.assertEqual(result, (8.0, 13.7))
 
 if __name__ == '__main__':
     unittest.main()
