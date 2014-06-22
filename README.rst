@@ -11,7 +11,7 @@ which gives a readability score (according to the Dale-Chall readability
 formula) and the number of uncommon words (based on the General Service List)
 in the text. It also lists all of these uncommon words (if you choose the verbose option).
 
-There is now also experimental support for the Coleman-Liau Readability Index.
+There is now also support for the Coleman-Liau Readability Index.
 
 Drat supports **docx**, **odt**, **ods**, **odp** files as well as text
 files and urls.
