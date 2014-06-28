@@ -33,13 +33,13 @@ class Checktext(object):
     def load_common(self, wlist):
         """Create the dictionary of common words."""
         self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.txt')
-        with open(self.com_dict, 'rb') as words_file:
+        with open(self.com_dict) as words_file:
             data = words_file.read()
         self.common_words = {word.strip() for word in data.splitlines()}
         if wlist:
             new_words = ''
             for wl in wlist:
-                with open(wl, 'rb') as f:
+                with open(wl) as f:
                     new_words += f.read()
             if new_words:
                 new_dict = {word.strip() for word in new_words.splitlines()}
@@ -48,7 +48,7 @@ class Checktext(object):
     def load_dale_chall(self):
         """Create the dictionary of words, and grade dictionary, for the Dale-Chall readability test."""
         self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.txt')
-        with open(self.dale_chall_dict, 'rb') as words_file:
+        with open(self.dale_chall_dict) as words_file:
             data = words_file.read()
         self.dale_chall_words = {word.strip() for word in data.splitlines()}
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
@@ -56,11 +56,10 @@ class Checktext(object):
 
     def pre_check(self, data):
         """Count chars, words and sentences in the text."""
-        sentences = len(re.findall(b'[\.!?]+', data)) or 1
-        chars = len(data) - len(re.findall(b'[^a-z0-9]', data))
-        num_words = len(re.findall(b'\s+', data))
-        print(sentences, chars, num_words)
-        data = re.split(b'[^a-z]+', data)
+        sentences = len(re.findall('[\.!?]+', data)) or 1
+        chars = len(data) - len(re.findall('[^a-z0-9]', data))
+        num_words = len(re.findall('\s+', data))
+        data = re.split('[^a-z]+', data)
         return data, sentences, chars, num_words
 
     def run_check(self, data):

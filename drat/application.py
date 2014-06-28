@@ -31,7 +31,7 @@ def check_url(arg, wlist, verb):
         print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
         return
     check = analysis.Checktext(arg, wlist, verb, False)
-    result = check.run_check(data.lower().encode('utf-8'))
+    result = check.run_check(data.lower())
     check.fmt_output(*result)
 
 def check_file(arg, wlist, verb):
@@ -41,7 +41,7 @@ def check_file(arg, wlist, verb):
         data = doc_reader.get_doctype()
     else:
         try:
-            with open(arg, 'rb') as f:
+            with open(arg) as f:
                 data = f.read()
         except:
             print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
