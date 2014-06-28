@@ -15,9 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+import sys
 import zipfile
 import xml.etree.ElementTree as ET
-from html.parser import HTMLParser
+PY2 = sys.version_info[0] == 2
+if PY2:
+    from HTMLParser import HTMLParser
+else:
+    from html.parser import HTMLParser
 
 class HtmlParser(HTMLParser):
     """Parse urls."""

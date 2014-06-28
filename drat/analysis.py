@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
+from __future__ import division
 import sys
 import os
 import re
@@ -35,14 +36,14 @@ class Checktext(object):
         self.com_dict = os.path.join(self.base_dir, 'dicts', 'EN_vocab.txt')
         with open(self.com_dict) as words_file:
             data = words_file.read()
-        self.common_words = {word.strip() for word in data.splitlines()}
+        self.common_words = set(data.splitlines())
         if wlist:
             new_words = ''
             for wl in wlist:
                 with open(wl) as f:
                     new_words += f.read()
             if new_words:
-                new_dict = {word.strip() for word in new_words.splitlines()}
+                new_dict = set(data.splitlines())
                 self.common_words.update(new_dict)
 
     def load_dale_chall(self):
@@ -50,7 +51,7 @@ class Checktext(object):
         self.dale_chall_dict = os.path.join(self.base_dir, 'dicts', 'dale_chall.txt')
         with open(self.dale_chall_dict) as words_file:
             data = words_file.read()
-        self.dale_chall_words = {word.strip() for word in data.splitlines()}
+        self.dale_chall_words = set(data.splitlines())
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
