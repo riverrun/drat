@@ -1,10 +1,11 @@
 import unittest
+import re
 from drat.analysis import Checktext
 
 class TestEmpty(unittest.TestCase):
     def test_no_sentences(self):
         data = b''
-        sentences = data.count(b'.') + data.count(b'!') + data.count(b'?') or 1
+        sentences = len(re.findall(b'[\.!?]+', data)) or 1
         self.assertEqual(sentences, 1)
 
     def test_no_data(self):
@@ -23,7 +24,7 @@ class TestParrot(unittest.TestCase):
         fname = 'parrot.txt'
         with open(fname, 'rb') as f:
             self.data = f.read()
-        self.sentences = self.data.count(b'.') + self.data.count(b'!') + self.data.count(b'?') or 1
+        self.sentences = len(re.findall(b'[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
     def test_sentences(self):
@@ -38,7 +39,7 @@ class TestGrade1(unittest.TestCase):
         fname = 'frog_toad.txt'
         with open(fname, 'rb') as f:
             self.data = f.read()
-        self.sentences = self.data.count(b'.') + self.data.count(b'!') + self.data.count(b'?') or 1
+        self.sentences = len(re.findall(b'[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
     def test_sentences(self):
@@ -53,7 +54,7 @@ class TestGrade5(unittest.TestCase):
         fname = 'amphib.txt'
         with open(fname, 'rb') as f:
             self.data = f.read()
-        self.sentences = self.data.count(b'.') + self.data.count(b'!') + self.data.count(b'?') or 1
+        self.sentences = len(re.findall(b'[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
     def test_sentences(self):
@@ -68,7 +69,7 @@ class TestGrade13(unittest.TestCase):
         fname = 'psych_today.txt'
         with open(fname, 'rb') as f:
             self.data = f.read()
-        self.sentences = self.data.count(b'.') + self.data.count(b'!') + self.data.count(b'?') or 1
+        self.sentences = len(re.findall(b'[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
     def test_sentences(self):

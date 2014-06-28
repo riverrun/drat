@@ -54,14 +54,20 @@ class Checktext(object):
         self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
                 7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
 
+    def pre_check(self, data):
+        """Count chars, words and sentences in the text."""
+        sentences = len(re.findall(b'[\.!?]+', data)) or 1
+        chars = len(data) - len(re.findall(b'[^a-z0-9]', data))
+        num_words = len(re.findall(b'\s+', data))
+        print(sentences, chars, num_words)
+        data = re.split(b'[^a-z]+', data)
+        return data, sentences, chars, num_words
+
     def run_check(self, data):
         """Check for uncommon words and difficult words in file."""
         if not data:
             sys.exit(1)
-        sentences = data.count(b'.') + data.count(b'!') + data.count(b'?') or 1
-        chars = len(re.findall(b'[a-z0-9]', data))
-        num_words = len(re.findall(b'\w+', data))
-        data = re.split(b'[^a-z]+', data)
+        data, sentences, chars, num_words = self.pre_check(data)
         w_dict = Counter(data)
         self.gsl(w_dict)
         non_dchall_set = Counter({word: count for word, count in w_dict.items()
