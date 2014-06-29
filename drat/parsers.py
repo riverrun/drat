@@ -48,7 +48,7 @@ class HtmlParser(HTMLParser):
             self.get_data = True
 
     def handle_data(self, data):
-        if self.body and self.get_data:
+        if self.body and self.get_data and data.strip():
             self.text.append(data)
 
 class DocParser(object):

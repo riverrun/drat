@@ -24,11 +24,11 @@ class TestParrot(unittest.TestCase):
         fname = 'parrot.txt'
         with open(fname, 'r') as f:
             self.data = f.read()
-        self.sentences = len(re.findall('[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
     def test_nums(self):
-        self.assertEqual(self.sentences, 82)
+        data, sentences, chars, num_words = self.check.pre_check(self.data)
+        self.assertEqual((sentences, chars, num_words), (82, 2220, 643))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
@@ -39,11 +39,11 @@ class TestGrade1(unittest.TestCase):
         fname = 'frog_toad.txt'
         with open(fname) as f:
             self.data = f.read()
-        self.sentences = len(re.findall('[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
-    def test_sentences(self):
-        self.assertEqual(self.sentences, 6)
+    def test_nums(self):
+        data, sentences, chars, num_words = self.check.pre_check(self.data)
+        self.assertEqual((sentences, chars, num_words), (6, 187, 59))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
@@ -54,11 +54,11 @@ class TestGrade5(unittest.TestCase):
         fname = 'amphib.txt'
         with open(fname) as f:
             self.data = f.read()
-        self.sentences = len(re.findall('[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
-    def test_sentences(self):
-        self.assertEqual(self.sentences, 15)
+    def test_nums(self):
+        data, sentences, chars, num_words = self.check.pre_check(self.data)
+        self.assertEqual((sentences, chars, num_words), (15, 650, 148))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
@@ -69,11 +69,11 @@ class TestGrade13(unittest.TestCase):
         fname = 'psych_today.txt'
         with open(fname) as f:
             self.data = f.read()
-        self.sentences = len(re.findall('[\.!?]+', self.data)) or 1
         self.check = Checktext(fname, wlist=None, verb=False, web=True)
 
-    def test_sentences(self):
-        self.assertEqual(self.sentences, 6)
+    def test_nums(self):
+        data, sentences, chars, num_words = self.check.pre_check(self.data)
+        self.assertEqual((sentences, chars, num_words), (6, 547, 100))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)

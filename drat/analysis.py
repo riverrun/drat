@@ -52,8 +52,8 @@ class Checktext(object):
         with open(self.dale_chall_dict) as words_file:
             data = words_file.read()
         self.dale_chall_words = set(data.splitlines())
-        self.dale_chall_grade = {4.9: 'Grade 4 and below', 5.9: 'Grades 5-6', 6.9: 'Grades 7-8',
-                7.9: 'Grades 9-10', 8.9: 'Grades 11-12', 9.9: 'Grades 13-15'}
+        self.dale_chall_grade = ((4.9, 'Grade 4 and below'), (5.9, 'Grades 5-6'), (6.9, 'Grades 7-8'),
+                (7.9, 'Grades 9-10'), (8.9, 'Grades 11-12'), (9.9, 'Grades 13-15'))
 
     def pre_check(self, data):
         """Count chars, words and sentences in the text."""
@@ -97,8 +97,8 @@ class Checktext(object):
 
     def fmt_output(self, dc_score, cli_score):
         for key in self.dale_chall_grade:
-            if dc_score <= key:
-                self.read_grade = self.dale_chall_grade[key]
+            if dc_score <= key[0]:
+                self.read_grade = key[1]
                 break
         else:
             self.read_grade = 'Grade 16 and above'
