@@ -26,7 +26,7 @@ def check_url(arg, wlist, verb):
         html = response.text
         url_reader = parsers.HtmlParser()
         url_reader.feed(html)
-        data = ''.join(url_reader.text)
+        data = '\n'.join(url_reader.text)
     except:
         print('Sorry, can\'t open {}. Are you sure it exists?'.format(arg))
         return
