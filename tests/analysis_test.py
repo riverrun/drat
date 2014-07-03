@@ -28,11 +28,11 @@ class TestParrot(unittest.TestCase):
 
     def test_nums(self):
         data, sentences, chars, num_words = self.check.pre_check(self.data)
-        self.assertEqual((sentences, chars, num_words), (82, 2220, 643))
+        self.assertEqual((sentences, chars, num_words), (82, 2456, 643))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (7.5, 0.7))
+        self.assertEqual(result, (10.3, 2.9))
 
 class TestGrade1(unittest.TestCase):
     def setUp(self):
@@ -43,11 +43,11 @@ class TestGrade1(unittest.TestCase):
 
     def test_nums(self):
         data, sentences, chars, num_words = self.check.pre_check(self.data)
-        self.assertEqual((sentences, chars, num_words), (6, 187, 59))
+        self.assertEqual((sentences, chars, num_words), (6, 198, 59))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (5.7, -0.2))
+        self.assertEqual(result, (7.1, 0.9))
 
 class TestGrade5(unittest.TestCase):
     def setUp(self):
@@ -58,11 +58,11 @@ class TestGrade5(unittest.TestCase):
 
     def test_nums(self):
         data, sentences, chars, num_words = self.check.pre_check(self.data)
-        self.assertEqual((sentences, chars, num_words), (15, 650, 148))
+        self.assertEqual((sentences, chars, num_words), (15, 666, 148))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (7.3, 7.0))
+        self.assertEqual(result, (7.6, 7.7))
 
 class TestGrade13(unittest.TestCase):
     def setUp(self):
@@ -73,11 +73,11 @@ class TestGrade13(unittest.TestCase):
 
     def test_nums(self):
         data, sentences, chars, num_words = self.check.pre_check(self.data)
-        self.assertEqual((sentences, chars, num_words), (6, 547, 100))
+        self.assertEqual((sentences, chars, num_words), (6, 554, 100))
 
     def test_raw_data(self):
         result = self.check.run_check(self.data)
-        self.assertEqual(result, (8.1, 14.6))
+        self.assertEqual(result, (8.4, 15.0))
 
 if __name__ == '__main__':
     unittest.main()

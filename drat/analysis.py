@@ -58,9 +58,9 @@ class Checktext(object):
     def pre_check(self, data):
         """Count chars, words and sentences in the text."""
         sentences = len(re.findall('[\.!?]+', data)) or 1
-        chars = len(data) - len(re.findall('[^a-z0-9]', data))
+        chars = len(data) - len(re.findall('[^a-zA-Z0-9]', data))
         num_words = len(re.findall('\s+', data))
-        data = re.split('[^a-z]+', data)
+        data = re.split('[^a-zA-Z]+', data)
         return data, sentences, chars, num_words
 
     def run_check(self, data):
