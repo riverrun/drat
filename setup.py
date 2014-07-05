@@ -22,7 +22,7 @@ with open('README.rst') as f:
 
 setup(
     name='drat',
-    version='0.3.4',
+    version='0.3.5',
     author='David Whitlock',
     author_email='alovedalongthe@gmail.com',
     url='https://github.com/riverrun/drat',
@@ -50,7 +50,10 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'drat = drat.application:cli',
+            'drat = drat.app:cli',
+            ],
+        'gui_scripts': [
+            'drat-tk = drat.gui:main',
             ]
         },
 )

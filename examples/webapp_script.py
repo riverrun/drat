@@ -1,7 +1,7 @@
 def rundrat(form):
-    from drat import analysis
-    data = form.textinput.data.lower().encode('utf-8')
-    check = analysis.Checktext('reading text', None, True, True)
+    from drat import analysis, app
+    data = form.textinput.data.lower()
+    check = analysis.Checktext(None)
     result = check.run_check(data)
-    check.fmt_output(*result)
-    return check.message.splitlines()
+    message = app.fmt_output(None, True, *result)
+    return message.splitlines()

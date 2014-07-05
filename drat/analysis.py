@@ -19,14 +19,10 @@ from __future__ import division
 import sys
 import os
 import re
-import textwrap
 from collections import Counter
 
 class Checktext(object):
-    def __init__(self, name, wlist, verb, web):
-        self.name = name
-        self.verb = verb
-        self.web = web
+    def __init__(self, wlist):
         self.base_dir = os.path.abspath(os.path.dirname(__file__))
         self.load_common(wlist)
         self.load_dale_chall()
@@ -52,8 +48,6 @@ class Checktext(object):
         with open(self.dale_chall_dict) as words_file:
             data = words_file.read()
         self.dale_chall_words = set(data.splitlines())
-        self.dale_chall_grade = ((4.9, 'Grade 4 and below'), (5.9, 'Grades 5-6'), (6.9, 'Grades 7-8'),
-                (7.9, 'Grades 9-10'), (8.9, 'Grades 11-12'), (9.9, 'Grades 13-15'))
 
     def pre_check(self, data):
         """Count chars, words and sentences in the text."""
@@ -69,19 +63,20 @@ class Checktext(object):
             sys.exit(1)
         data, sentences, chars, num_words = self.pre_check(data)
         w_dict = Counter(data)
-        self.gsl(w_dict)
+        uniq_len, uncommon, uncom_len = self.gsl(w_dict)
         non_dchall_set = Counter({word: count for word, count in w_dict.items()
             if word and word not in self.dale_chall_words})
         diff_count = sum(non_dchall_set.values())
         dc_score = round(self.dale_chall(diff_count, num_words, sentences), 1)
         cli_score = round(self.coleman_liau(chars, num_words, sentences), 1)
-        return dc_score, cli_score
+        return uncommon, uncom_len, uniq_len, dc_score, cli_score
 
     def gsl(self, w_dict):
-        self.uniq_len = len(w_dict)
-        self.uncommon = Counter({word: count for word, count in w_dict.items()
+        uniq_len = len(w_dict)
+        uncommon = Counter({word: count for word, count in w_dict.items()
             if word and word not in self.common_words})
-        self.uncom_len = len(self.uncommon)
+        uncom_len = len(uncommon)
+        return uniq_len, uncommon, uncom_len
 
     def dale_chall(self, diff_count, words, sentences):
         """Calculate Dale-Chall readability score."""
@@ -94,23 +89,3 @@ class Checktext(object):
 
     def coleman_liau(self, chars, words, sentences):
         return 0.0588 * (chars / words * 100) - 0.296 * (sentences / words * 100) - 15.8
-
-    def fmt_output(self, dc_score, cli_score):
-        for key in self.dale_chall_grade:
-            if dc_score <= key[0]:
-                self.read_grade = key[1]
-                break
-        else:
-            self.read_grade = 'Grade 16 and above'
-        self.message = 'Report for {}.\n'.format(self.name)
-        self.message += 'There are {:d} uncommon words in this text.\n'.format(self.uncom_len)
-        self.message += 'This is out of a total of {:d} unique words.\n'.format(self.uniq_len)
-        self.message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dc_score, self.read_grade)
-        self.message += 'The Coleman-Liau Index is {:.1f}.\n'.format(cli_score)
-        if self.verb:
-            self.message += 'The following {:d} words are not in the list of common words:\n'.format(self.uncom_len)
-            for item in self.uncommon.most_common():
-                self.message += '{}: {}  '.format(item[0], item[1])
-        if not self.web:
-            for line in self.message.splitlines():
-                print(textwrap.fill(line, width=120))
