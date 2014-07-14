@@ -7,11 +7,7 @@ with open('name_list.txt') as f:
     filenames = [line for line in f]
 
 for arg in filenames:
-    if arg.startswith(('http', 'ftp')):
-        result = app.check_url(arg, None)
-    else:
-        result = app.check_file(arg, None)
-    message = app.fmt_output(arg, False, *result)
+    message = app.start_check(arg, None, False)
     for line in message.splitlines():
         print(textwrap.fill(line, width=120))
-    print('\n')
+print('\n')

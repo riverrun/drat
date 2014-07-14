@@ -69,6 +69,13 @@ def fmt_output(name, verb, uncommon, uncom_len, uniq_len, dc_score, cli_score):
             message += '{}: {}  '.format(item[0], item[1])
     return message
 
+def start_check(arg, wordlist, verbose):
+    if arg.startswith(('http', 'ftp')):
+        result = check_url(arg, wordlist)
+    else:
+        result = check_file(arg, wordlist)
+    return fmt_output(arg, verbose, *result)
+
 @click.command()
 @click.argument('filename', required=sys.stdin.isatty(), nargs=-1)
 @click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
@@ -84,10 +91,6 @@ def cli(filename, wordlist, verbose):
         with sys.stdin as f:
             filename = [arg.strip() for arg in f]
     for arg in filename:
-        if arg.startswith(('http', 'ftp')):
-            result = check_url(arg, wordlist)
-        else:
-            result = check_file(arg, wordlist)
-        message = fmt_output(arg, verbose, *result)
+        message = start_check(arg, wordlist, verbose)
         for line in message.splitlines():
             print(textwrap.fill(line, width=120))
