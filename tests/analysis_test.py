@@ -22,7 +22,7 @@ class TestEmpty(unittest.TestCase):
 class TestParrot(unittest.TestCase):
     def setUp(self):
         fname = 'parrot.txt'
-        with open(fname, 'r') as f:
+        with open(fname) as f:
             self.data = f.read()
         self.check = Checktext(wlist=None)
 
