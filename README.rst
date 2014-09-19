@@ -25,63 +25,12 @@ webapp directory.
 Use
 ~~~
 
-drat [--help] [-v] [-w wordlist-file] file-or-url
-
--  multiple files, or urls, can be analyzed
--  the files can be text files, docx files, or odf files
--  a list of urls, or files, written in a text file can be redirected to drat:
-   e.g., drat < list-of-urls.txt
--  -w use an additional wordlist(s)
--  This wordlist needs to be a text file with each word on a separate line
--  More than one wordlist can be used
-
-For example, the following command will analyze an office (Writer)
-document called 'NorwegianBlue.odt':
-
-::
-
-    drat NorwegianBlue.odt
-
-The -w (wordlist-file) option will let you filter out additional words:
-
-::
-
-    drat -w euphemisms_death.txt NorwegianBlue.odt 
-
-You can use the -w option multiple times if you want to use more than one wordlist:
-
-::
-
-    drat -w euphemisms_death.txt -w customer_service.txt NorwegianBlue.odt 
-
-And this command will download the following url and analyze the text in
-it:
-
-::
-
-    drat url_you_want_analyzed.html
-
-It is also possible to analyze several files in one command:
-
-::
-
-    drat text_file.txt word_document.docx open_office_file.odt
-
-The following command is an example of redirecting the output of the contents of
-a text file. The text file has one link per line (url or file) and each link in it is parsed:
-
-::
-
-    drat < list-of-urls.txt
-
-Adding the -v option to any of the above commands will give you a list
-of the uncommon words.
+Please read the `wiki <https://github.com/riverrun/drat/wiki>`_ for information about how to use drat.
 
 Todo
 ~~~~
 
 -  Whatever feature requests anyone has (as long as it's not too much work).
--  Improve html parsing.
 -  More support for other readability scores.
 -  Maybe support other languages.
 
