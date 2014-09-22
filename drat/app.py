@@ -76,17 +76,21 @@ def start_check(arg, wordlist, verbose):
         result = check_file(arg, wordlist)
     return fmt_output(arg, verbose, *result)
 
-@click.command()
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('filename', required=sys.stdin.isatty(), nargs=-1)
 @click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
         help='Name of wordlist file(s) to be used as an additional filter.')
 @click.option('--verbose', '-v', count=True, help='Provide more detailed information.')
 def cli(filename, wordlist, verbose):
-    """FILENAME is the file, or url, you have chosen. This will be compared with
-    lists of common English words, and a report of the results will be saved in
-    the current working directory. It is possible to check multiple files.\n
+    """FILENAME is the file, or url, you want analyzed. Multiple files, or urls,
+    can be checked.\n
     You can also provide a list of url links (with each link on a separate line)
-    written in a text file. Each link in the file will then be checked."""
+    written in a text file. Each link in the file will then be checked.\n
+    After the analysis, a report will be printed out. This report will list
+    all the unique words in the text, the uncommon words (those words not
+    in the General Service List), the Dale-Chall Readability Score (and the
+    equivalent grade level), and the Coleman-Liau Readability Index."""
     if not filename:
         with sys.stdin as f:
             filename = [arg.strip() for arg in f]

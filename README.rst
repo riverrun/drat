@@ -27,13 +27,6 @@ Use
 
 Please read the `wiki <https://github.com/riverrun/drat/wiki>`_ for information about how to use drat.
 
-Todo
-~~~~
-
--  Whatever feature requests anyone has (as long as it's not too much work).
--  More support for other readability scores.
--  Maybe support other languages.
-
 Dependencies
 ~~~~~~~~~~~~
 
