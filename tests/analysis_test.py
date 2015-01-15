@@ -21,7 +21,7 @@ class TestEmpty(unittest.TestCase):
 
 class TestParrot(unittest.TestCase):
     def setUp(self):
-        fname = 'parrot.txt'
+        fname = 'tests/parrot.txt'
         with open(fname) as f:
             self.data = f.read()
         self.check = Checktext(wlist=None)
@@ -36,7 +36,7 @@ class TestParrot(unittest.TestCase):
 
 class TestGrade1(unittest.TestCase):
     def setUp(self):
-        fname = 'frog_toad.txt'
+        fname = 'tests/frog_toad.txt'
         with open(fname) as f:
             self.data = f.read()
         self.check = Checktext(wlist=None)
@@ -51,7 +51,7 @@ class TestGrade1(unittest.TestCase):
 
 class TestGrade5(unittest.TestCase):
     def setUp(self):
-        fname = 'amphib.txt'
+        fname = 'tests/amphib.txt'
         with open(fname) as f:
             self.data = f.read()
         self.check = Checktext(wlist=None)
@@ -66,7 +66,7 @@ class TestGrade5(unittest.TestCase):
 
 class TestGrade13(unittest.TestCase):
     def setUp(self):
-        fname = 'psych_today.txt'
+        fname = 'tests/psych_today.txt'
         with open(fname) as f:
             self.data = f.read()
         self.check = Checktext(wlist=None)
