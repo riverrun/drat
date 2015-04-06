@@ -1,7 +1,7 @@
+# an example of how to call drat from a Flask web app
+
 def rundrat(form):
-    from drat import analysis, app
+    from drat import app
     data = form.textinput.data.lower()
-    check = analysis.Checktext(None)
-    result = check.run_check(data)
-    message = app.fmt_output(None, True, *result)
-    return message.splitlines()
+    message = app.raw_check(data)
+    return render_template('webapp.html', message=message.splitlines())

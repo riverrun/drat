@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# A simple script that takes a text file with a list of filenames in it
+# and then analyzes these text files.
 
 import textwrap
 from drat import app
