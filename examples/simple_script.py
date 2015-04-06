@@ -10,4 +10,3 @@ for arg in filenames:
     message = app.start_check(arg, None, False)
     for line in message.splitlines():
         print(textwrap.fill(line, width=120))
-print('\n')

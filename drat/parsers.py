@@ -54,21 +54,17 @@ class HtmlParser(HTMLParser):
         if self.body and self.get_data and self.noscript and data.strip(self.rem):
             self.text.append(data)
 
-class DocParser(object):
+def doc_reader(infile):
     """Parse docx and odf files."""
-    def __init__(self, infile):
-        self.infile = infile
-
-    def get_doctype(self):
-        if self.infile.endswith('.docx'):
-            docid = 'word/document.xml'
-        else:
-            docid = 'content.xml'
-        try:
-            zfile = zipfile.ZipFile(self.infile)
-        except:
-            print('Sorry, can\'t open {}.'.format(self.infile))
-            return
-        body = ET.fromstring(zfile.read(docid))
-        text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
-        return text
+    if infile.endswith('.docx'):
+        docid = 'word/document.xml'
+    else:
+        docid = 'content.xml'
+    try:
+        zfile = zipfile.ZipFile(infile)
+    except:
+        print('Sorry, can\'t open {}.'.format(infile))
+        return
+    body = ET.fromstring(zfile.read(docid))
+    text = '\n'.join([et.text.strip() for et in body.iter() if et.text])
+    return text

@@ -37,8 +37,7 @@ def check_url(arg, wlist):
 def check_file(arg, wlist):
     exts = ('.docx', '.odt', '.ods', '.odp')
     if arg.endswith(exts):
-        doc_reader = parsers.DocParser(arg)
-        data = doc_reader.get_doctype()
+        data = parsers.doc_reader(arg)
     else:
         try:
             with open(arg) as f:
@@ -75,6 +74,13 @@ def start_check(arg, wordlist, verbose):
     else:
         result = check_file(arg, wordlist)
     return fmt_output(arg, verbose, *result)
+
+def raw_check(data):
+    if not data:
+        return 'No text to check.'
+    check = analysis.Checktext(None)
+    result = check.run_check(data.lower())
+    return fmt_output('this text', True, *result)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.command(context_settings=CONTEXT_SETTINGS)
