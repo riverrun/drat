@@ -84,11 +84,6 @@ def raw_check(data):
     result = check.run_check(data.lower())
     return fmt_output('this text', True, *result)
 
-def single_run(name, wordlist, verbose):
-    message = start_check(name, wordlist, verbose)
-    for line in message.splitlines():
-        print(textwrap.fill(line, width=120))
-
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('filenames', required=sys.stdin.isatty(), nargs=-1)
@@ -108,7 +103,10 @@ def cli(filenames, wordlist, verbose):
     if not filenames:
         with sys.stdin as f:
             filenames = [arg.strip() for arg in f]
-    run = partial(single_run, wordlist=wordlist, verbose=verbose)
+    run = partial(start_check, wordlist=wordlist, verbose=verbose)
     cores = MP.cpu_count()
     with MP.Pool(cores) as p:
-        p.map(run, filenames)
+        message = p.map(run, filenames)
+    for report in message:
+        for line in report.splitlines():
+            print(textwrap.fill(line, width=120))
