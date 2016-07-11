@@ -90,7 +90,8 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
         help='Name of wordlist file(s) to be used as an additional filter.')
 @click.option('--verbose', '-v', count=True, help='Provide more detailed information.')
-def cli(filenames, wordlist, verbose):
+@click.option('--jobs', '-j', type=int, help='Number of parallel jobs.')
+def cli(filenames, wordlist, verbose, jobs):
     """FILENAMES is the file, or url, you want analyzed.\n
     Multiple files, or urls, can be checked, and if possible, they will
     be checked in parallel.\n
@@ -104,7 +105,7 @@ def cli(filenames, wordlist, verbose):
         with sys.stdin as f:
             filenames = [arg.strip() for arg in f]
     run = partial(start_check, wordlist=wordlist, verbose=verbose)
-    cores = MP.cpu_count()
+    cores = jobs or MP.cpu_count()
     with MP.Pool(cores) as p:
         message = p.map(run, filenames)
     for report in message:
