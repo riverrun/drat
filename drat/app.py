@@ -1,6 +1,6 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
 # A simple text analysis tool
-# Copyright (C) 2013-2015 David Whitlock
+# Copyright (C) 2013-2016 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 
 import sys
 import click
+import multiprocessing as MP
 import requests
 import textwrap
+from functools import partial
 from . import analysis, parsers
 
 def check_url(arg, wlist):
@@ -66,7 +68,7 @@ def fmt_output(name, verb, uncommon, uncom_len, uniq_len, dc_score, cli_score):
         message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
         for item in uncommon.most_common():
             message += '{}: {}  '.format(item[0], item[1])
-    return message
+    return message + '\n'
 
 def start_check(arg, wordlist, verbose):
     if arg.startswith(('http', 'ftp')):
@@ -82,25 +84,31 @@ def raw_check(data):
     result = check.run_check(data.lower())
     return fmt_output('this text', True, *result)
 
+def single_run(name, wordlist, verbose):
+    message = start_check(name, wordlist, verbose)
+    for line in message.splitlines():
+        print(textwrap.fill(line, width=120))
+
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.command(context_settings=CONTEXT_SETTINGS)
-@click.argument('filename', required=sys.stdin.isatty(), nargs=-1)
+@click.argument('filenames', required=sys.stdin.isatty(), nargs=-1)
 @click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
         help='Name of wordlist file(s) to be used as an additional filter.')
 @click.option('--verbose', '-v', count=True, help='Provide more detailed information.')
-def cli(filename, wordlist, verbose):
-    """FILENAME is the file, or url, you want analyzed. Multiple files, or urls,
-    can be checked.\n
+def cli(filenames, wordlist, verbose):
+    """FILENAMES is the file, or url, you want analyzed.\n
+    Multiple files, or urls, can be checked, and if possible, they will
+    be checked in parallel.\n
     You can also provide a list of url links (with each link on a separate line)
     written in a text file. Each link in the file will then be checked.\n
     After the analysis, a report will be printed out. This report will list
     all the unique words in the text, the uncommon words (those words not
     in the General Service List), the Dale-Chall Readability Score (and the
     equivalent grade level), and the Coleman-Liau Readability Index."""
-    if not filename:
+    if not filenames:
         with sys.stdin as f:
-            filename = [arg.strip() for arg in f]
-    for arg in filename:
-        message = start_check(arg, wordlist, verbose)
-        for line in message.splitlines():
-            print(textwrap.fill(line, width=120))
+            filenames = [arg.strip() for arg in f]
+    run = partial(single_run, wordlist=wordlist, verbose=verbose)
+    cores = MP.cpu_count()
+    with MP.Pool(cores) as p:
+        p.map(run, filenames)

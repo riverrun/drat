@@ -1,6 +1,6 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
 # A simple text analysis tool
-# Copyright (C) 2013-2015 David Whitlock
+# Copyright (C) 2013-2016 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ with open('README.rst') as f:
 
 setup(
     name='drat',
-    version='0.5.0',
+    version='1.0.0',
     author='David Whitlock',
     author_email='alovedalongthe@gmail.com',
     url='https://github.com/riverrun/drat',
