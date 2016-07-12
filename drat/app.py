@@ -112,4 +112,4 @@ def cli(filenames, wordlist, verbose, jobs):
     cores = jobs or MP.cpu_count()
     with MP.Pool(cores) as p:
         reports = p.map(run, filenames)
-    click.echo_via_pager('\n'.join(reports))
+    click.echo('\n'.join(reports))
