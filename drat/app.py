@@ -19,7 +19,6 @@ import sys
 import click
 import multiprocessing as MP
 import requests
-import textwrap
 from functools import partial
 from . import analysis, parsers
 
@@ -59,16 +58,17 @@ def fmt_output(name, verb, uncommon, uncom_len, uniq_len, dc_score, cli_score):
             break
     else:
         read_grade = 'Grade 16 and above'
-    message = 'Report for {}.\n'.format(name)
-    message += 'There are {:d} uncommon words in this text.\n'.format(uncom_len)
-    message += 'This is out of a total of {:d} unique words.\n'.format(uniq_len)
-    message += 'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dc_score, read_grade)
-    message += 'The Coleman-Liau Index is {:.1f}.\n'.format(cli_score)
+    message = [click.style('Report for {}\n\n'.format(name), bold=True, underline=True),
+            'There are {:d} uncommon words in this text.\n'.format(uncom_len),
+            'This is out of a total of {:d} unique words.\n'.format(uniq_len),
+            'The Dale-Chall readability score is {:.1f} ({}).\n'.format(dc_score, read_grade),
+            'The Coleman-Liau Index is {:.1f}.\n'.format(cli_score)]
     if verb:
-        message += 'The following {:d} words are not in the list of common words:\n'.format(uncom_len)
-        for item in uncommon.most_common():
-            message += '{}: {}  '.format(item[0], item[1])
-    return message + '\n'
+        message.append('\nThese uncommon words are in the text:\n')
+        count = 0 if verb > 1 else 4
+        message += ['{}: {} '.format(item[0], item[1])
+                for item in uncommon.most_common() if item[1] > count]
+    return ''.join(message) + '\n'
 
 def start_check(arg, wordlist, verbose):
     if arg.startswith(('http', 'ftp')):
@@ -94,20 +94,22 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 def cli(filenames, wordlist, verbose, jobs):
     """FILENAMES is the file, or url, you want analyzed.\n
     Multiple files, or urls, can be checked, and if possible, they will
-    be checked in parallel.\n
+    be checked in parallel. The number of jobs can be adjusted, and it
+    defaults to the number of cores on your machine.\n
     You can also provide a list of url links (with each link on a separate line)
     written in a text file. Each link in the file will then be checked.\n
     After the analysis, a report will be printed out. This report will list
     all the unique words in the text, the uncommon words (those words not
     in the General Service List), the Dale-Chall Readability Score (and the
-    equivalent grade level), and the Coleman-Liau Readability Index."""
+    equivalent grade level), and the Coleman-Liau Readability Index.\n
+    The verbose option, `-v`, will print out a list of the uncommon words
+    that occurred five or more times. `-vv` will print out all of the
+    uncommon words."""
     if not filenames:
         with sys.stdin as f:
             filenames = [arg.strip() for arg in f]
     run = partial(start_check, wordlist=wordlist, verbose=verbose)
     cores = jobs or MP.cpu_count()
     with MP.Pool(cores) as p:
-        message = p.map(run, filenames)
-    for report in message:
-        for line in report.splitlines():
-            print(textwrap.fill(line, width=120))
+        reports = p.map(run, filenames)
+    click.echo_via_pager('\n'.join(reports))
