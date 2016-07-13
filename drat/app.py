@@ -65,17 +65,18 @@ def fmt_output(name, verb, uncommon, uncom_len, uniq_len, dc_score, cli_score):
             'The Coleman-Liau Index is {:.1f}.\n'.format(cli_score)]
     if verb:
         message.append('\nThese uncommon words are in the text:\n')
-        count = 0 if verb > 1 else 4
-        message += ['{}: {} '.format(item[0], item[1])
-                for item in uncommon.most_common() if item[1] > count]
-    return ''.join(message) + '\n'
+        count = 50 if verb == 1 else None
+        message += ['{}: {}, '.format(item[0], item[1]) for item in uncommon.most_common(count)]
+    return ''.join(message).rstrip(', ') + '\n'
 
 def start_check(arg, wordlist, verbose):
     if arg.startswith(('http', 'ftp')):
         result = check_url(arg, wordlist)
     else:
         result = check_file(arg, wordlist)
-    return fmt_output(arg, verbose, *result)
+    if result:
+        return fmt_output(arg, verbose, *result)
+    return 'There was an error checking {}.\n'.format(arg)
 
 def raw_check(data):
     if not data:
@@ -89,27 +90,24 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.argument('filenames', required=sys.stdin.isatty(), nargs=-1)
 @click.option('--wordlist', '-w', type=click.Path(True), multiple=True,
         help='Name of wordlist file(s) to be used as an additional filter.')
-@click.option('--verbose', '-v', count=True, help='Provide more detailed information.')
-@click.option('--jobs', '-j', type=int, help='Number of parallel jobs.')
-def cli(filenames, wordlist, verbose, jobs):
+@click.option('--verbose', '-v', count=True, help='List uncommon words.')
+def cli(filenames, wordlist, verbose):
     """FILENAMES is the file, or url, you want analyzed.\n
     Multiple files, or urls, can be checked, and if possible, they will
-    be checked in parallel. The number of jobs can be adjusted, and it
-    defaults to the number of cores on your machine.\n
+    be checked in parallel.\n
     You can also provide a list of url links (with each link on a separate line)
     written in a text file. Each link in the file will then be checked.\n
-    After the analysis, a report will be printed out. This report will list
-    all the unique words in the text, the uncommon words (those words not
-    in the General Service List), the Dale-Chall Readability Score (and the
-    equivalent grade level), and the Coleman-Liau Readability Index.\n
-    The verbose option, `-v`, will print out a list of the uncommon words
-    that occurred five or more times. `-vv` will print out all of the
-    uncommon words."""
+    After the analysis, a report will be printed out. This report will print out
+    the number of unique words in the text, the number of uncommon words (those
+    words not in the General Service List), the Dale-Chall Readability Score
+    (and the equivalent grade level), and the Coleman-Liau Readability Index.\n
+    The verbose option, `-v`, will print out a list of the uncommon
+    words that occurred the most times (the top 50). `-vv` will print out
+    all of the uncommon words."""
     if not filenames:
         with sys.stdin as f:
             filenames = [arg.strip() for arg in f]
     run = partial(start_check, wordlist=wordlist, verbose=verbose)
-    cores = jobs or MP.cpu_count()
-    with MP.Pool(cores) as p:
+    with MP.Pool(MP.cpu_count()) as p:
         reports = p.map(run, filenames)
     click.echo('\n'.join(reports))
