@@ -1,7 +1,7 @@
 Drat
 ====
 
-Text (readability) analysis tool written in Python (2.7 and 3).
+Text (readability) analysis tool written in Python.
 
 Features
 ~~~~~~~~
@@ -32,7 +32,7 @@ Please read the `wiki <https://github.com/riverrun/drat/wiki>`_ for information 
 Dependencies
 ~~~~~~~~~~~~
 
-Python (2.7 or 3), click and requests.
+Python, click and requests.
 
 Name
 ~~~~

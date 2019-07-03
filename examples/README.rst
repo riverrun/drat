@@ -15,5 +15,3 @@ The short function in the webapp_script file takes the text from the input box a
 drat to analyze it.
 
 The simple_script file shows how you might call drat from a script.
-
-You will need to change the shebang line if you are using Python 2.7.

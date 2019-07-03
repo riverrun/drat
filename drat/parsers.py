@@ -1,6 +1,6 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
 # A simple text analysis tool
-# Copyright (C) 2013-2017 David Whitlock
+# Copyright (C) 2013-2019 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,11 +18,7 @@
 import sys
 import zipfile
 import xml.etree.ElementTree as ET
-PY2 = sys.version_info[0] == 2
-if PY2:
-    from HTMLParser import HTMLParser
-else:
-    from html.parser import HTMLParser
+from html.parser import HTMLParser
 
 class HtmlParser(HTMLParser):
     """Parse urls."""

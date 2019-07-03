@@ -1,6 +1,6 @@
 # Authors: David Whitlock <alovedalongthe@gmail.com>
 # A simple text analysis tool
-# Copyright (C) 2013-2017 David Whitlock
+# Copyright (C) 2013-2019 David Whitlock
 #
 # Drat is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Drat.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-from __future__ import division
 import sys
 import os
 import re
